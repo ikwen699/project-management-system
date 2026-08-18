@@ -19,43 +19,48 @@ export const {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            return null;
+          }
+
+          const { data: user, error } = await supabase
+            .from("User")
+            .select("*")
+            .eq("email", credentials.email as string)
+            .single();
+
+          if (error) {
+            console.error("Auth DB error:", error.message, "code:", error.code);
+            return null;
+          }
+
+          if (!user) {
+            console.error("Auth: no user found for email:", credentials.email);
+            return null;
+          }
+
+          const isPasswordValid = await compare(
+            credentials.password as string,
+            (user as User).password
+          );
+
+          if (!isPasswordValid) {
+            console.error("Auth: invalid password for email:", credentials.email);
+            return null;
+          }
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.avatar,
+            role: (user as any).role || "USER",
+          };
+        } catch (e: any) {
+          console.error("Auth authorize exception:", e?.message || String(e));
           return null;
         }
-
-        const { data: user, error } = await supabase
-          .from("User")
-          .select("*")
-          .eq("email", credentials.email as string)
-          .single();
-
-        if (error) {
-          console.error("Auth DB error:", error.message, "code:", error.code);
-          return null;
-        }
-
-        if (!user) {
-          console.error("Auth: no user found for email:", credentials.email);
-          return null;
-        }
-
-        const isPasswordValid = await compare(
-          credentials.password as string,
-          (user as User).password
-        );
-
-        if (!isPasswordValid) {
-          console.error("Auth: invalid password for email:", credentials.email);
-          return null;
-        }
-
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.avatar,
-          role: (user as any).role || "USER",
-        };
       },
     }),
   ],
