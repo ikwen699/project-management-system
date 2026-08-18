@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     }
     console.error("Login error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error", details: error?.message || String(error) },
       { status: 500 }
     );
   }
