@@ -29,7 +29,13 @@ export const {
           .eq("email", credentials.email as string)
           .single();
 
-        if (error || !user) {
+        if (error) {
+          console.error("Auth DB error:", error.message, "code:", error.code);
+          return null;
+        }
+
+        if (!user) {
+          console.error("Auth: no user found for email:", credentials.email);
           return null;
         }
 
@@ -39,6 +45,7 @@ export const {
         );
 
         if (!isPasswordValid) {
+          console.error("Auth: invalid password for email:", credentials.email);
           return null;
         }
 
