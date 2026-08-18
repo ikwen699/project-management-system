@@ -49,9 +49,6 @@ export default async function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        <link rel="apple-touch-icon" href="/icons/icon.svg" />
-      </head>
       <body className="min-h-full flex flex-col">
         <ServiceWorkerRegistrar />
         <Providers session={session}>{children}</Providers>

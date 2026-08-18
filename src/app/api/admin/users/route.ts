@@ -187,6 +187,11 @@ export async function DELETE(request: Request) {
       );
     }
 
+    // Delete related records that don't cascade (no ON DELETE CASCADE)
+    await supabase.from("TimeEntry").delete().eq("userId", userId);
+    await supabase.from("FileAttachment").delete().eq("userId", userId);
+    await supabase.from("ActivityLog").delete().eq("userId", userId);
+
     const { error } = await supabase.from("User").delete().eq("id", userId);
     if (error) throw error;
 

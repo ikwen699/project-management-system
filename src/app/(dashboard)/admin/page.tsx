@@ -68,8 +68,8 @@ export default function AdminPage() {
         fetch("/api/admin/users"),
       ]);
 
-      if (projRes.status === 403 || userRes.status === 403) {
-        toast.error("Access denied");
+      if (projRes.status === 401 || projRes.status === 403 || userRes.status === 401 || userRes.status === 403) {
+        toast.error("Access denied — super admin only");
         router.push("/");
         return;
       }
@@ -85,14 +85,9 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      if ((session.user as any).role !== "SUPER_ADMIN") {
-        toast.error("Access denied");
-        router.push("/");
-        return;
-      }
       loadData();
     }
-  }, [status, session, router, loadData]);
+  }, [status, loadData]);
 
   async function handleRoleChange(userId: string, newRole: string) {
     setUpdatingUser(userId);
@@ -184,7 +179,7 @@ export default function AdminPage() {
     );
   }
 
-  if ((session?.user as any)?.role !== "SUPER_ADMIN") {
+  if (projects.length === 0 && users.length === 0) {
     return null;
   }
 
