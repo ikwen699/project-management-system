@@ -12,28 +12,32 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-      callbackUrl: "/",
-    });
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: "/",
+      });
 
-    if (result?.error) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 }
-      );
+      if (result?.error) {
+        return NextResponse.json(
+          { error: "Invalid email or password" },
+          { status: 401 }
+        );
+      }
+
+      return NextResponse.json({ url: result?.url || "/" });
+    } catch (e: any) {
+      if (e?.digest?.startsWith("NEXT_REDIRECT")) {
+        return NextResponse.json({ url: "/" });
+      }
+      throw e;
     }
-
-    return NextResponse.json({ url: result?.url || "/" });
   } catch (error: any) {
-    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
-      throw error;
-    }
-    console.error("Login error:", error);
+    console.error("Login error:", error?.message || String(error));
     return NextResponse.json(
-      { error: "Internal server error", details: error?.message || String(error) },
+      { error: error?.message || "Internal server error" },
       { status: 500 }
     );
   }
