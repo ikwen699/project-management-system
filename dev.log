@@ -1,0 +1,259 @@
+
+> project-management-system@0.1.0 dev
+> next dev --webpack
+
+▲ Next.js 16.3.0 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://10.179.191.246:3000
+- Environments: .env
+✓ Ready in 2.6s
+⚠ Attempted to load @next/swc-win32-x64-msvc, but an error occurred: \\?\C:\Users\ATSEYE\project-management-system\node_modules\@next\swc-win32-x64-msvc\next-swc.win32-x64-msvc.node is not a valid Win32 application.
+\\?\C:\Users\ATSEYE\project-management-system\node_modules\@next\swc-win32-x64-msvc\next-swc.win32-x64-msvc.node
+✓ Running next.config.ts took 1406ms
+  Skipping creating a lockfile at C:\Users\ATSEYE\project-management-system\.next\dev\lock because we're using WASM bindings
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+○ Compiling /projects/new ...
+ GET /projects/new 200 in 11.8s (next.js: 10.1s, proxy.ts: 672ms, application-code: 966ms)
+○ Compiling /api/auth/[...nextauth] ...
+ GET /projects/new 200 in 360ms (next.js: 144ms, proxy.ts: 44ms, application-code: 172ms)
+ GET /api/notifications/unread-count 200 in 6.1s (next.js: 4.5s, application-code: 1583ms)
+ GET /api/auth/session 200 in 6.0s (next.js: 5.9s, application-code: 99ms)
+ GET /api/auth/session 200 in 49ms (next.js: 21ms, application-code: 27ms)
+ GET /api/auth/session 200 in 46ms (next.js: 5ms, application-code: 42ms)
+ GET /api/auth/session 200 in 30ms (next.js: 5ms, application-code: 25ms)
+ GET /api/notifications/unread-count 200 in 823ms (next.js: 5ms, application-code: 818ms)
+ GET /api/auth/session 200 in 1376ms (next.js: 200ms, application-code: 1176ms)
+ GET /projects/new 200 in 1020ms (next.js: 151ms, proxy.ts: 129ms, application-code: 740ms)
+ GET /projects/new? 200 in 96ms (next.js: 9ms, proxy.ts: 15ms, application-code: 73ms)
+ GET /api/auth/session 200 in 118ms (next.js: 18ms, application-code: 100ms)
+ GET /api/auth/session 200 in 26ms (next.js: 3ms, application-code: 23ms)
+ GET /api/auth/session 200 in 41ms (next.js: 4ms, application-code: 36ms)
+ GET /api/auth/session 200 in 42ms (next.js: 5ms, application-code: 37ms)
+ GET /api/notifications/unread-count 200 in 1471ms (next.js: 5ms, application-code: 1466ms)
+ GET /api/notifications/unread-count 200 in 785ms (next.js: 11ms, application-code: 774ms)
+ GET /projects 200 in 3.5s (next.js: 3.3s, proxy.ts: 19ms, application-code: 130ms)
+ GET /api/projects 200 in 3.4s (next.js: 2.1s, application-code: 1269ms)
+ GET /api/projects 200 in 366ms (next.js: 3ms, application-code: 362ms)
+ GET /projects/new 200 in 175ms (next.js: 106ms, proxy.ts: 12ms, application-code: 57ms)
+ POST /api/projects 201 in 1786ms (next.js: 2ms, application-code: 1784ms)
+○ Compiling /projects/[projectId] ...
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 4.8s (next.js: 4.7s, proxy.ts: 11ms, application-code: 54ms)
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 124ms (next.js: 30ms, proxy.ts: 17ms, application-code: 77ms)
+○ Compiling /api/projects/[id]/members ...
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 586ms (next.js: 313ms, proxy.ts: 29ms, application-code: 244ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/tasks 200 in 10.4s (next.js: 9.5s, application-code: 911ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/progress 200 in 10.4s (next.js: 9.0s, application-code: 1447ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/members 200 in 10.4s (next.js: 9.5s, application-code: 942ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 10.5s (next.js: 9.6s, application-code: 922ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/tasks 200 in 490ms (next.js: 14ms, application-code: 475ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/progress 200 in 516ms (next.js: 25ms, application-code: 492ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/members 200 in 657ms (next.js: 21ms, application-code: 636ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 647ms (next.js: 19ms, application-code: 628ms)
+ GET /api/auth/session 200 in 63ms (next.js: 21ms, application-code: 42ms)
+ GET /api/auth/session 200 in 22ms (next.js: 5ms, application-code: 17ms)
+ GET /api/auth/session 200 in 37ms (next.js: 16ms, application-code: 21ms)
+ GET /api/auth/session 200 in 20ms (next.js: 4ms, application-code: 16ms)
+ GET /api/auth/session 200 in 557ms (next.js: 280ms, application-code: 276ms)
+ GET /api/auth/session 200 in 124ms (next.js: 49ms, application-code: 75ms)
+ GET /api/auth/session 200 in 35ms (next.js: 14ms, application-code: 20ms)
+ GET /api/auth/session 200 in 20ms (next.js: 3ms, application-code: 17ms)
+ GET /api/auth/session 200 in 74ms (next.js: 25ms, application-code: 49ms)
+ GET /api/auth/session 200 in 62ms (next.js: 8ms, application-code: 54ms)
+○ Compiling /api/auth/[...nextauth] ...
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 8.4s (next.js: 6.5s, proxy.ts: 70ms, application-code: 1803ms)
+ GET /api/auth/session 200 in 8.4s (next.js: 6.5s, application-code: 1858ms)
+○ Compiling /api/projects/[id]/members ...
+ GET /api/auth/session 200 in 6.5s (next.js: 4.5s, application-code: 1972ms)
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 745ms (next.js: 459ms, proxy.ts: 26ms, application-code: 260ms)
+ GET /api/auth/session 200 in 96ms (next.js: 12ms, application-code: 84ms)
+ GET /api/auth/session 200 in 104ms (next.js: 32ms, application-code: 72ms)
+ GET /api/auth/session 200 in 36ms (next.js: 4ms, application-code: 32ms)
+ GET /api/notifications/unread-count 200 in 14.8s (next.js: 4.6s, application-code: 10.3s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/tasks 200 in 14.8s (next.js: 4.5s, application-code: 10.3s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/progress 200 in 14.9s (next.js: 4.6s, application-code: 10.3s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 15.1s (next.js: 4.6s, application-code: 10.6s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/members 200 in 15.1s (next.js: 4.5s, application-code: 10.6s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/tasks 200 in 1459ms (next.js: 26ms, application-code: 1433ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/progress 200 in 1391ms (next.js: 32ms, application-code: 1359ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 1341ms (next.js: 35ms, application-code: 1306ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/members 200 in 1326ms (next.js: 28ms, application-code: 1298ms)
+ GET /api/notifications/unread-count 200 in 3.8s (next.js: 19ms, application-code: 3.8s)
+ GET /api/auth/session 200 in 473ms (next.js: 165ms, application-code: 308ms)
+ GET /api/auth/session 200 in 36ms (next.js: 5ms, application-code: 31ms)
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa/board 200 in 3.3s (next.js: 3.2s, proxy.ts: 12ms, application-code: 49ms)
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa/board 200 in 463ms (next.js: 300ms, proxy.ts: 31ms, application-code: 131ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/members 200 in 5.6s (next.js: 3.1s, application-code: 2.5s)
+ GET /api/auth/session 200 in 105ms (next.js: 40ms, application-code: 66ms)
+ GET /api/auth/session 200 in 42ms (next.js: 7ms, application-code: 35ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/members 200 in 533ms (next.js: 7ms, application-code: 527ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/columns 200 in 6.8s (next.js: 6.1s, application-code: 654ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/columns 200 in 844ms (next.js: 23ms, application-code: 821ms)
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 203ms (next.js: 28ms, proxy.ts: 15ms, application-code: 160ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 7.1s (next.js: 408ms, application-code: 6.7s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/progress 200 in 6.8s (next.js: 77ms, application-code: 6.7s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/tasks 200 in 6.8s (next.js: 51ms, application-code: 6.8s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/members 200 in 6.8s (next.js: 28ms, application-code: 6.8s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 2.9s (next.js: 18ms, application-code: 2.9s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/progress 200 in 2.8s (next.js: 20ms, application-code: 2.8s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/tasks 200 in 2.7s (next.js: 28ms, application-code: 2.7s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/members 200 in 2.7s (next.js: 45ms, application-code: 2.6s)
+○ Compiling /login ...
+ GET /login? 200 in 3.9s (next.js: 2.9s, proxy.ts: 70ms, application-code: 943ms)
+ GET /login? 200 in 202ms (next.js: 22ms, proxy.ts: 31ms, application-code: 148ms)
+ GET /login? 200 in 209ms (next.js: 23ms, proxy.ts: 22ms, application-code: 164ms)
+ GET /api/auth/session 200 in 2.8s (next.js: 2.3s, application-code: 493ms)
+ GET /api/auth/session 200 in 27ms (next.js: 6ms, application-code: 21ms)
+ GET /api/auth/session 200 in 24ms (next.js: 5ms, application-code: 19ms)
+ GET /api/auth/session 200 in 23ms (next.js: 3ms, application-code: 20ms)
+ POST /api/auth/login 200 in 3.4s (next.js: 999ms, application-code: 2.4s)
+ GET / 200 in 3.8s (next.js: 3.3s, proxy.ts: 15ms, application-code: 430ms)
+⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET / 200 in 391ms (next.js: 56ms, proxy.ts: 69ms, application-code: 266ms)
+○ Compiling /api/metrics ...
+ GET /api/auth/session 200 in 5.7s (next.js: 5.1s, application-code: 578ms)
+ GET /api/auth/session 200 in 31ms (next.js: 5ms, application-code: 26ms)
+ GET /api/auth/session 200 in 25ms (next.js: 4ms, application-code: 21ms)
+ GET /api/auth/session 200 in 25ms (next.js: 3ms, application-code: 21ms)
+ GET /api/auth/session 200 in 22ms (next.js: 5ms, application-code: 17ms)
+ GET /api/auth/session 200 in 18ms (next.js: 3ms, application-code: 16ms)
+ GET /api/notifications/unread-count 200 in 6.4s (next.js: 5.1s, application-code: 1261ms)
+ GET /api/projects 200 in 6.4s (next.js: 5.1s, application-code: 1296ms)
+ GET /api/metrics 200 in 6.4s (next.js: 5.1s, application-code: 1338ms)
+ GET /api/projects 200 in 421ms (next.js: 2ms, application-code: 419ms)
+ GET /api/metrics 200 in 395ms (next.js: 2ms, application-code: 393ms)
+ GET /api/notifications/unread-count 200 in 865ms (next.js: 3ms, application-code: 862ms)
+ GET /api/auth/session 200 in 78ms (next.js: 28ms, application-code: 50ms)
+ GET /api/auth/session 200 in 44ms (next.js: 7ms, application-code: 36ms)
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 247ms (next.js: 148ms, proxy.ts: 14ms, application-code: 85ms)
+⨯ Failed to generate static paths for /projects/[projectId]:
+Error: Cannot find module './vendor-chunks/react-hot-toast.js'
+Require stack:
+- C:\Users\ATSEYE\project-management-system\.next\dev\server\webpack-runtime.js
+- C:\Users\ATSEYE\project-management-system\.next\dev\server\app\(dashboard)\projects\[projectId]\page.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\require.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\load-components.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at ignore-listed frames {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\ATSEYE\\project-management-system\\.next\\dev\\server\\webpack-runtime.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\.next\\dev\\server\\app\\(dashboard)\\projects\\[projectId]\\page.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ]
+}
+○ Compiling /api/projects/[id]/members ...
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/tasks 200 in 7.1s (next.js: 4.7s, application-code: 2.4s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/progress 200 in 7.1s (next.js: 4.7s, application-code: 2.4s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/members 200 in 7.1s (next.js: 4.7s, application-code: 2.4s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 7.2s (next.js: 4.7s, application-code: 2.4s)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/members 200 in 422ms (next.js: 12ms, application-code: 410ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/tasks 200 in 533ms (next.js: 10ms, application-code: 523ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa 200 in 411ms (next.js: 7ms, application-code: 405ms)
+ GET /api/projects/1f035b3e-16cb-442b-8369-97481e1c80aa/progress 200 in 484ms (next.js: 10ms, application-code: 474ms)
+⨯ Error: Cannot find module './vendor-chunks/react-hot-toast.js'
+Require stack:
+- C:\Users\ATSEYE\project-management-system\.next\dev\server\webpack-runtime.js
+- C:\Users\ATSEYE\project-management-system\.next\dev\server\app\(dashboard)\projects\[projectId]\page.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\require.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\load-components.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at ignore-listed frames {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\ATSEYE\\project-management-system\\.next\\dev\\server\\webpack-runtime.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\.next\\dev\\server\\app\\(dashboard)\\projects\\[projectId]\\page.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ],
+  page: '/projects/1f035b3e-16cb-442b-8369-97481e1c80aa'
+}
+○ Compiling /_error ...
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa 500 in 15.8s (next.js: 15.3s, proxy.ts: 66ms, application-code: 399ms)
+⨯ Error: Cannot find module './vendor-chunks/react-hot-toast.js'
+Require stack:
+- C:\Users\ATSEYE\project-management-system\.next\dev\server\webpack-runtime.js
+- C:\Users\ATSEYE\project-management-system\.next\dev\server\app\(dashboard)\projects\[projectId]\page.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\require.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\load-components.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at ignore-listed frames {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\ATSEYE\\project-management-system\\.next\\dev\\server\\webpack-runtime.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\.next\\dev\\server\\app\\(dashboard)\\projects\\[projectId]\\page.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ],
+  page: '/projects/1f035b3e-16cb-442b-8369-97481e1c80aa'
+}
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa 500 in 1840ms (next.js: 1789ms, proxy.ts: 22ms, application-code: 28ms)
+⨯ Error: Cannot find module './vendor-chunks/react-hot-toast.js'
+Require stack:
+- C:\Users\ATSEYE\project-management-system\.next\dev\server\webpack-runtime.js
+- C:\Users\ATSEYE\project-management-system\.next\dev\server\app\(dashboard)\projects\[projectId]\page.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\require.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\load-components.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at ignore-listed frames {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\ATSEYE\\project-management-system\\.next\\dev\\server\\webpack-runtime.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\.next\\dev\\server\\app\\(dashboard)\\projects\\[projectId]\\page.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ],
+  page: '/projects/1f035b3e-16cb-442b-8369-97481e1c80aa'
+}
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa 500 in 1269ms (next.js: 1230ms, proxy.ts: 17ms, application-code: 22ms)
+ GET /projects/1f035b3e-16cb-442b-8369-97481e1c80aa/board 200 in 767ms (next.js: 360ms, proxy.ts: 110ms, application-code: 297ms)
+⨯ Failed to generate static paths for /projects/[projectId]/board:
+Error: Cannot find module './vendor-chunks/react-hot-toast.js'
+Require stack:
+- C:\Users\ATSEYE\project-management-system\.next\dev\server\webpack-runtime.js
+- C:\Users\ATSEYE\project-management-system\.next\dev\server\app\(dashboard)\projects\[projectId]\board\page.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\require.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\load-components.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\ATSEYE\project-management-system\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at ignore-listed frames {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\ATSEYE\\project-management-system\\.next\\dev\\server\\webpack-runtime.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\.next\\dev\\server\\app\\(dashboard)\\projects\\[projectId]\\board\\page.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\ATSEYE\\project-management-system\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ]
+}
+ GET /api/auth/session 200 in 1485ms (next.js: 29ms, application-code: 1456ms)
+ GET /api/auth/session 200 in 29ms (next.js: 4ms, application-code: 25ms)
+ GET /api/auth/session 200 in 90ms (next.js: 43ms, application-code: 46ms)
+ GET /api/auth/session 200 in 50ms (next.js: 7ms, application-code: 44ms)
+ GET /api/auth/session 200 in 1050ms (next.js: 414ms, application-code: 636ms)
+ GET /api/auth/session 200 in 33ms (next.js: 6ms, application-code: 27ms)
+^C^C

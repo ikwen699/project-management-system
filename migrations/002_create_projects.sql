@@ -1,0 +1,15 @@
+-- 002: Create Projects table
+CREATE TYPE project_status AS ENUM ('PLANNING', 'ACTIVE', 'ON_HOLD', 'COMPLETED', 'CANCELLED');
+
+CREATE TABLE IF NOT EXISTS "Project" (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
+  name TEXT NOT NULL,
+  description TEXT,
+  status project_status DEFAULT 'PLANNING',
+  "isArchived" BOOLEAN DEFAULT FALSE,
+  "startDate" TIMESTAMP WITH TIME ZONE,
+  "endDate" TIMESTAMP WITH TIME ZONE,
+  "ownerId" TEXT NOT NULL REFERENCES "User"(id) ON DELETE CASCADE,
+  "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
