@@ -638,7 +638,7 @@ export default function ProjectDetailPage() {
                           <MoreVertical className="h-4 w-4" />
                         </button>
                         {taskMenuId === task.id && (
-                          <div className="absolute right-0 top-8 z-20 bg-white border border-border rounded-lg shadow-lg py-1 w-40">
+                          <div className="absolute right-0 bottom-full mb-2 z-20 bg-white border border-border rounded-lg shadow-lg py-1 w-40">
                             {project.columns?.map((col) => (
                               <button
                                 key={col.id}
