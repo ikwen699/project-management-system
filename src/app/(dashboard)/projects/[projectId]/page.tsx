@@ -10,6 +10,7 @@ import {
   Trash2,
   Calendar,
   User,
+  Users,
   X,
   Check,
   Loader2,
@@ -377,7 +378,9 @@ export default function ProjectDetailPage() {
                   {new Date(project.endDate).toLocaleDateString()}
                 </span>
               )}
-              <span>{project.memberCount} members</span>
+              <Link href={`/projects/${projectId}/members`} className="hover:underline">
+                {project.memberCount} members
+              </Link>
             </div>
             {project.description && (
               <p className="text-sm text-muted-foreground mb-4">
@@ -427,6 +430,12 @@ export default function ProjectDetailPage() {
             className="flex items-center gap-1.5 border border-border px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-muted transition-colors"
           >
             Board View
+          </Link>
+          <Link
+            href={`/projects/${projectId}/members`}
+            className="flex items-center gap-1.5 border border-border px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-muted transition-colors"
+          >
+            <Users className="h-3.5 w-3.5" /> Members
           </Link>
           <button
             onClick={handleArchiveProject}
