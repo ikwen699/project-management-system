@@ -130,6 +130,7 @@ export default function ProjectDetailPage() {
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [taskMenuId, setTaskMenuId] = useState<string | null>(null);
+  const [menuOpenUp, setMenuOpenUp] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -629,16 +630,22 @@ export default function ProjectDetailPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setTaskMenuId(
-                              taskMenuId === task.id ? null : task.id
-                            );
+                            if (taskMenuId === task.id) {
+                              setTaskMenuId(null);
+                            } else {
+                              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                              setMenuOpenUp(rect.top > 220);
+                              setTaskMenuId(task.id);
+                            }
                           }}
                           className="p-1 hover:bg-muted rounded"
                         >
                           <MoreVertical className="h-4 w-4" />
                         </button>
                         {taskMenuId === task.id && (
-                          <div className="absolute right-0 bottom-full mb-2 z-20 bg-white border border-border rounded-lg shadow-lg py-1 w-40">
+                          <div className={`absolute right-0 z-20 bg-white border border-border rounded-lg shadow-lg py-1 w-40 ${
+                            menuOpenUp ? "bottom-full mb-2" : "top-full mt-2"
+                          }`}>
                             {project.columns?.map((col) => (
                               <button
                                 key={col.id}
