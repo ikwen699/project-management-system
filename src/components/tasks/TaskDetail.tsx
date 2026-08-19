@@ -18,6 +18,7 @@ import {
   Timer,
 } from "lucide-react";
 import { TaskPriorityBadge } from "./TaskPriorityBadge";
+import { UserSelect } from "@/components/ui/UserSelect";
 import toast from "react-hot-toast";
 
 interface TimeEntry {
@@ -409,18 +410,12 @@ export function TaskDetail({
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Assignee</label>
-              <select
+              <UserSelect
+                users={members}
                 value={assigneeId}
-                onChange={(e) => setAssigneeId(e.target.value)}
-                className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none"
-              >
-                <option value="">Unassigned</option>
-                {members.map((m) => (
-                  <option key={m.userId} value={m.userId}>
-                    {m.userName}
-                  </option>
-                ))}
-              </select>
+                onChange={setAssigneeId}
+                placeholder="Unassigned"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">Estimated Hours</label>

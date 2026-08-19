@@ -66,75 +66,80 @@ export async function POST(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { email, role } = await request.json();
+    const { email, role, userId: directUserId } = await request.json();
 
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    if (!email && !directUserId) {
+      return NextResponse.json({ error: "Email or userId is required" }, { status: 400 });
     }
 
-    const { data: existingUser } = await supabase
-      .from("User")
+    let userId = directUserId;
+
+    if (!userId && email) {
+      const { data: existingUser } = await supabase
+        .from("User")
+        .select("id")
+        .eq("email", email)
+        .single();
+
+      if (!existingUser) {
+        const token = crypto.randomUUID();
+        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+        const { error: inviteError } = await supabase
+          .from("ProjectInvite")
+          .insert({
+            id: crypto.randomUUID(),
+            projectId: id,
+            email,
+            invitedById: session.user.id,
+            role: role || "MEMBER",
+            token,
+            expiresAt,
+          });
+
+        if (inviteError) throw inviteError;
+
+        return NextResponse.json({ message: "Invite sent", token }, { status: 201 });
+      }
+      userId = existingUser.id;
+    }
+
+    const { data: existingMember } = await supabase
+      .from("ProjectMember")
       .select("id")
-      .eq("email", email)
+      .eq("projectId", id)
+      .eq("userId", userId)
       .single();
 
-    if (existingUser) {
-      const { data: existingMember } = await supabase
-        .from("ProjectMember")
-        .select("id")
-        .eq("projectId", id)
-        .eq("userId", existingUser.id)
-        .single();
-
-      if (existingMember) {
-        return NextResponse.json(
-          { error: "User is already a member" },
-          { status: 409 }
-        );
-      }
-
-      const { error } = await supabase
-        .from("ProjectMember")
-        .insert({
-          id: crypto.randomUUID(),
-          userId: existingUser.id,
-          projectId: id,
-          role: role || "MEMBER",
-        });
-
-      if (error) throw error;
-
-      const { data: project } = await supabase
-        .from("Project")
-        .select("name")
-        .eq("id", id)
-        .single();
-
-      if (project) {
-        notifyMemberAdded(id, project.name, existingUser.id, session.user.id);
-      }
-
-      return NextResponse.json({ message: "Member added" }, { status: 201 });
+    if (existingMember) {
+      return NextResponse.json(
+        { error: "User is already a member" },
+        { status: 409 }
+      );
     }
 
-    const token = crypto.randomUUID();
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-
     const { error } = await supabase
-      .from("ProjectInvite")
+      .from("ProjectMember")
       .insert({
         id: crypto.randomUUID(),
+        userId,
         projectId: id,
-        email,
-        invitedById: session.user.id,
         role: role || "MEMBER",
-        token,
-        expiresAt,
       });
 
     if (error) throw error;
 
-    return NextResponse.json({ message: "Invite sent", token }, { status: 201 });
+    const { data: project } = await supabase
+      .from("Project")
+      .select("name")
+      .eq("id", id)
+      .single();
+
+    if (project) {
+      notifyMemberAdded(id, project.name, userId, session.user.id);
+    }
+
+    return NextResponse.json({ message: "Member added" }, { status: 201 });
   } catch (error) {
     console.error("Invite member error:", error);
     return NextResponse.json(
