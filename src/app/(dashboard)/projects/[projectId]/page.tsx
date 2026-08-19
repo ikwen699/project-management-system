@@ -19,6 +19,7 @@ import {
   MoreVertical,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { UserSelect } from "@/components/ui/UserSelect";
 
 interface Member {
   userId: string;
@@ -112,6 +113,11 @@ export default function ProjectDetailPage() {
   const [editEndDate, setEditEndDate] = useState("");
   const [saving, setSaving] = useState(false);
 
+  const [editMemberUserId, setEditMemberUserId] = useState("");
+  const [editMemberRole, setEditMemberRole] = useState("MEMBER");
+  const [editAddingMember, setEditAddingMember] = useState(false);
+  const [allUsers, setAllUsers] = useState<{ id: string; name: string; email: string; avatar: string | null }[]>([]);
+
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
@@ -156,6 +162,49 @@ export default function ProjectDetailPage() {
     setEditStartDate(project.startDate ? project.startDate.split("T")[0] : "");
     setEditEndDate(project.endDate ? project.endDate.split("T")[0] : "");
     setEditingProject(true);
+    fetch("/api/users").then((r) => r.json()).then(setAllUsers).catch(() => {});
+  }
+
+  const memberUserIds = new Set(members.map((m) => m.userId));
+  const editAvailableUsers = allUsers
+    .filter((u) => !memberUserIds.has(u.id))
+    .map((u) => ({ userId: u.id, userName: u.name, userEmail: u.email, userAvatar: u.avatar }));
+
+  async function handleEditAddMember() {
+    if (!editMemberUserId) { toast.error("Select a user"); return; }
+    setEditAddingMember(true);
+    try {
+      const res = await fetch(`/api/projects/${projectId}/members`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: editMemberUserId, role: editMemberRole }),
+      });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error); return; }
+      toast.success("Member added!");
+      setEditMemberUserId("");
+      loadData();
+    } catch {
+      toast.error("Failed to add member");
+    } finally {
+      setEditAddingMember(false);
+    }
+  }
+
+  async function handleEditRemoveMember(userId: string) {
+    if (!confirm("Remove this member?")) return;
+    try {
+      const res = await fetch(`/api/projects/${projectId}/members`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      if (!res.ok) { toast.error("Failed to remove"); return; }
+      toast.success("Member removed");
+      loadData();
+    } catch {
+      toast.error("Failed to remove member");
+    }
   }
 
   async function handleSaveProject(e: React.FormEvent) {
@@ -723,6 +772,71 @@ export default function ProjectDetailPage() {
                   />
                 </div>
               </div>
+
+              <div className="border-t border-border pt-4">
+                <h3 className="text-sm font-semibold mb-3">Team Members</h3>
+                <div className="space-y-2 mb-3">
+                  {members.map((m) => (
+                    <div key={m.userId} className="flex items-center justify-between py-1.5">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                          {m.userAvatar ? (
+                            <img src={m.userAvatar} alt="" className="h-7 w-7 rounded-full" />
+                          ) : (
+                            <span className="text-[10px] font-medium text-primary-foreground">
+                              {m.userName?.charAt(0) || "?"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">{m.userName}</p>
+                          <p className="text-xs text-muted-foreground truncate">{m.userEmail}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs bg-muted px-2 py-0.5 rounded-full">{m.role}</span>
+                        {m.role !== "OWNER" && (
+                          <button
+                            type="button"
+                            onClick={() => handleEditRemoveMember(m.userId)}
+                            className="p-1 hover:bg-muted rounded text-destructive"
+                            aria-label="Remove member"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <UserSelect
+                      users={editAvailableUsers}
+                      value={editMemberUserId}
+                      onChange={setEditMemberUserId}
+                      placeholder="Add a user..."
+                    />
+                  </div>
+                  <select
+                    value={editMemberRole}
+                    onChange={(e) => setEditMemberRole(e.target.value)}
+                    className="border border-input rounded-lg px-2 py-1.5 text-sm outline-none"
+                  >
+                    <option value="MEMBER">Member</option>
+                    <option value="ADMIN">Admin</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={handleEditAddMember}
+                    disabled={editAddingMember || !editMemberUserId}
+                    className="bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
               <div className="flex gap-3 pt-2">
                 <button
                   type="submit"
