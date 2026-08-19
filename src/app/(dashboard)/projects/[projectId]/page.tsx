@@ -131,6 +131,7 @@ export default function ProjectDetailPage() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [taskMenuId, setTaskMenuId] = useState<string | null>(null);
   const [menuOpenUp, setMenuOpenUp] = useState(false);
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -154,6 +155,19 @@ export default function ProjectDetailPage() {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    if (!taskMenuId) return;
+    function handleClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      if (!target.closest("[data-task-menu]")) {
+        setTaskMenuId(null);
+        setMenuPos(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [taskMenuId]);
 
   function openEditProject() {
     if (!project) return;
@@ -626,15 +640,21 @@ export default function ProjectDetailPage() {
                       )}
                     </td>
                     <td className="p-3">
-                      <div className="relative">
+                        <div className="relative" data-task-menu>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             if (taskMenuId === task.id) {
                               setTaskMenuId(null);
+                              setMenuPos(null);
                             } else {
                               const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                              setMenuOpenUp(rect.top > 220);
+                              const openUp = rect.bottom > window.innerHeight - 220;
+                              setMenuOpenUp(openUp);
+                              setMenuPos({
+                                top: openUp ? rect.top - 220 : rect.bottom + 4,
+                                left: rect.left - 140,
+                              });
                               setTaskMenuId(task.id);
                             }
                           }}
@@ -642,10 +662,11 @@ export default function ProjectDetailPage() {
                         >
                           <MoreVertical className="h-4 w-4" />
                         </button>
-                        {taskMenuId === task.id && (
-                          <div className={`absolute right-0 z-20 bg-white border border-border rounded-lg shadow-lg py-1 w-40 ${
-                            menuOpenUp ? "bottom-full mb-2" : "top-full mt-2"
-                          }`}>
+                        {taskMenuId === task.id && menuPos && (
+                          <div
+                            className="fixed z-50 bg-white border border-border rounded-lg shadow-lg py-1 w-40"
+                            style={{ top: menuPos.top, left: menuPos.left }}
+                          >
                             {project.columns?.map((col) => (
                               <button
                                 key={col.id}
