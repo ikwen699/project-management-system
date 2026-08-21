@@ -39,7 +39,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img src="/logo.png" alt="Logo" width={64} height={64} className="rounded mx-auto" />
+          <h1 className="text-3xl font-bold">PMS</h1>
           <p className="text-muted-foreground mt-2">
             Sign in to your account
           </p>

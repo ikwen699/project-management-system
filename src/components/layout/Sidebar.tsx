@@ -47,7 +47,7 @@ export function Sidebar() {
         }`}
       >
         {!collapsed && (
-          <img src="/logo.png" alt="Logo" width={32} height={32} className="rounded" />
+          <span className="text-lg font-bold tracking-tight">PMS</span>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
