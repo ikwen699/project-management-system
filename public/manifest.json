@@ -1,6 +1,6 @@
 {
   "name": "Project Management System",
-  "short_name": "PMS",
+  "short_name": "Project Management System",
   "description": "Manage projects, tasks, and teams efficiently",
   "start_url": "/",
   "display": "standalone",

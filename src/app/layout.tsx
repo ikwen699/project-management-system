@@ -16,13 +16,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Project Management System",
+    title: "Project Management System",
   description: "Manage projects, tasks, and teams efficiently",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "PMS",
+    title: "Project Management System",
   },
   formatDetection: {
     telephone: false,
