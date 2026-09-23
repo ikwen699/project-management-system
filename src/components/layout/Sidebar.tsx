@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/projects", label: "Projects", icon: FolderKanban },
   { href: "/calendar", label: "Calendar", icon: Calendar },
   { href: "/notifications", label: "Notifications", icon: Bell },
@@ -47,7 +47,7 @@ export function Sidebar() {
         }`}
       >
         {!collapsed && (
-          <span className="text-lg font-bold tracking-tight">PMS</span>
+          <span className="text-lg font-bold tracking-tight">Nexora</span>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
@@ -65,8 +65,8 @@ export function Sidebar() {
       <nav className="flex-1 py-4 space-y-1 px-2">
         {allItems.map((item) => {
           const isActive =
-            item.href === "/"
-              ? pathname === "/"
+            item.href === "/dashboard"
+              ? pathname === "/dashboard" || pathname === "/"
               : pathname.startsWith(item.href);
           return (
             <Link

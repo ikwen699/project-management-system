@@ -1,7 +1,7 @@
 {
-  "name": "Project Management System",
-  "short_name": "PMS",
-  "description": "Manage projects, tasks, and teams efficiently",
+  "name": "Nexora",
+  "short_name": "Nexora",
+  "description": "One workspace to plan projects, organize teams, track progress, and deliver work without the back-and-forth.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

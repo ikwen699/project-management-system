@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         email,
         password,
         redirect: false,
-        callbackUrl: "/",
+        callbackUrl: "/dashboard",
       });
 
       if (result?.error) {
@@ -27,10 +27,10 @@ export async function POST(request: Request) {
         );
       }
 
-      return NextResponse.json({ url: result?.url || "/" });
+      return NextResponse.json({ url: result?.url || "/dashboard" });
     } catch (e: any) {
       if (e?.digest?.startsWith("NEXT_REDIRECT")) {
-        return NextResponse.json({ url: "/" });
+        return NextResponse.json({ url: "/dashboard" });
       }
       throw e;
     }

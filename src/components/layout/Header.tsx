@@ -79,9 +79,9 @@ export function Header() {
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowMobileMenu(false)} />
           <div className="absolute left-0 top-0 h-full w-64 bg-sidebar-bg text-sidebar-fg p-4">
-            <p className="text-lg font-bold mb-4">PMS</p>
+            <p className="text-lg font-bold mb-4">Nexora</p>
             <nav className="space-y-1">
-              <a href="/" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Dashboard</a>
+              <a href="/dashboard" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Dashboard</a>
               <a href="/projects" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Projects</a>
               <a href="/calendar" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Calendar</a>
               <a href="/notifications" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Notifications</a>

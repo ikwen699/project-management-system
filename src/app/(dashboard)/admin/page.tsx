@@ -70,7 +70,7 @@ export default function AdminPage() {
 
       if (projRes.status === 401 || projRes.status === 403 || userRes.status === 401 || userRes.status === 403) {
         toast.error("Access denied — super admin only");
-        router.push("/");
+        router.push("/dashboard");
         return;
       }
 
@@ -187,7 +187,7 @@ export default function AdminPage() {
     <div className="space-y-6">
       <div>
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-2"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Dashboard

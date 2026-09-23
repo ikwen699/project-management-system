@@ -16,13 +16,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "PMS",
-  description: "Manage projects, tasks, and teams efficiently",
+  title: "Nexora",
+  description:
+    "Nexora — one workspace to plan projects, organize teams, track progress, and deliver work without the back-and-forth.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "PMS",
+    title: "Nexora",
   },
   formatDetection: {
     telephone: false,
