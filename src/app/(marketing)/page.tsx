@@ -13,7 +13,7 @@ import { Faq } from "@/components/marketing/Faq";
 import { FinalCta } from "@/components/marketing/FinalCta";
 
 export const metadata: Metadata = {
-  title: "Nexora — Take Your Projects From Chaos to Complete",
+  title: "Xora — Take Your Projects From Chaos to Complete",
   description:
     "One powerful workspace to plan projects, organize teams, track progress, manage deadlines, and deliver work without the endless back-and-forth. Free to get started.",
 };
