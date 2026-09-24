@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 
 export async function POST(request: Request) {
   try {
-    const { name, email, password } = await request.json();
+    const { name, email, password, plan, trial } = await request.json();
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -35,14 +35,25 @@ export async function POST(request: Request) {
 
     const hashedPassword = await hash(password, 12);
 
+    const billing = buildInitialBilling(plan, trial);
+
     const { error } = await supabase
       .from("User")
-      .insert({ id: crypto.randomUUID(), name, email, password: hashedPassword });
+      .insert({
+        id: crypto.randomUUID(),
+        name,
+        email,
+        password: hashedPassword,
+        plan: billing.plan,
+        planStatus: billing.planStatus,
+        trialEndsAt: billing.trialEndsAt,
+        planExpiresAt: null,
+      });
 
     if (error) throw error;
 
     return NextResponse.json(
-      { message: "Account created successfully" },
+      { message: "Account created successfully", plan: billing.plan },
       { status: 201 }
     );
   } catch (error) {
@@ -52,4 +63,24 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+
+function buildInitialBilling(
+  plan: string | undefined,
+  trial: boolean | undefined
+): { plan: string; planStatus: string; trialEndsAt: Date | null } {
+  const TRIAL_DAYS = 7;
+
+  if (trial) {
+    const endsAt = new Date();
+    endsAt.setDate(endsAt.getDate() + TRIAL_DAYS);
+    return { plan: "business", planStatus: "trialing", trialEndsAt: endsAt };
+  }
+
+  if (plan === "business") {
+    // Chose Business at signup: payment still required to activate.
+    return { plan: "business", planStatus: "expired", trialEndsAt: null };
+  }
+
+  return { plan: "starter", planStatus: "active", trialEndsAt: null };
 }

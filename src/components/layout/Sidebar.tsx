@@ -47,7 +47,7 @@ export function Sidebar() {
         }`}
       >
         {!collapsed && (
-          <span className="text-lg font-bold tracking-tight">Nexora</span>
+          <span className="text-lg font-bold tracking-tight">Xora</span>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}

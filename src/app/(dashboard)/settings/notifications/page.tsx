@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Lock, Bell } from "lucide-react";
+import { User, Lock, Bell, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -8,6 +8,7 @@ const settingsTabs = [
   { href: "/settings", label: "Profile", icon: User },
   { href: "/settings/password", label: "Password", icon: Lock },
   { href: "/settings/notifications", label: "Notifications", icon: Bell },
+  { href: "/settings/billing", label: "Billing", icon: CreditCard },
 ];
 
 const notificationOptions = [

@@ -34,7 +34,7 @@ const plans: Plan[] = [
     price: "$12",
     priceSuffix: "/user/mo",
     priceNote: "or $120/year per user — save 17%",
-    cta: { label: "Start Free Trial", href: "/register" },
+    cta: { label: "Choose Business", href: "/register?plan=business" },
     highlighted: true,
     features: [
       "Unlimited projects",

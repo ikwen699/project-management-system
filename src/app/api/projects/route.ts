@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+import { getEntitlement } from "@/lib/billing";
 import { logProjectCreated } from "@/lib/activity";
 
 export async function GET() {
@@ -41,6 +42,28 @@ export async function POST(request: Request) {
         { error: "Project name is required" },
         { status: 400 }
       );
+    }
+
+    const entitlement = await getEntitlement(session.user.id);
+    if (!entitlement.isFullAccess) {
+      const { count } = await supabase
+        .from("Project")
+        .select("id", { count: "exact", head: true })
+        .eq("ownerId", session.user.id)
+        .not("isArchived", "eq", true);
+
+      if (count !== null && count >= entitlement.projectLimit) {
+        return NextResponse.json(
+          {
+            error:
+              "Free plan is limited to " +
+              entitlement.projectLimit +
+              " projects. Upgrade to Business for unlimited projects.",
+            code: "PLAN_LIMIT",
+          },
+          { status: 403 }
+        );
+      }
     }
 
     const projectId = crypto.randomUUID();

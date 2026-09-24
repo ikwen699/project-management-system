@@ -1,5 +1,22 @@
 export type SystemRole = "USER" | "SUPER_ADMIN";
 
+export type Plan = "starter" | "business" | "scale";
+export type PlanStatus = "active" | "trialing" | "expired";
+export type BillingInterval = "monthly" | "annual";
+
+export interface Payment {
+  id: string;
+  userId: string;
+  txRef: string;
+  amount: number;
+  currency: string;
+  interval: BillingInterval;
+  status: "pending" | "successful" | "failed";
+  plan: Plan;
+  planExpiresAt: Date | null;
+  createdAt: Date;
+}
+
 export interface User {
   id: string;
   name: string;

@@ -1,16 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function RegisterPage() {
+type PlanChoice = "starter" | "trial" | "business";
+
+function RegisterForm() {
+  const searchParams = useSearchParams();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [planChoice, setPlanChoice] = useState<PlanChoice>(() => {
+    if (searchParams.get("plan") === "business") return "business";
+    if (searchParams.get("trial") === "business") return "trial";
+    return "starter";
+  });
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -33,7 +41,13 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          plan: planChoice === "business" ? "business" : undefined,
+          trial: planChoice === "trial",
+        }),
       });
 
       const data = await res.json();
@@ -43,7 +57,11 @@ export default function RegisterPage() {
         return;
       }
 
-      router.push("/login?registered=true");
+      if (planChoice === "business") {
+        router.push("/login?registered=true&plan=business");
+      } else {
+        router.push("/login?registered=true");
+      }
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -51,17 +69,68 @@ export default function RegisterPage() {
     }
   }
 
+  const planOptions: {
+    value: PlanChoice;
+    title: string;
+    subtitle: string;
+  }[] = [
+    {
+      value: "starter",
+      title: "Starter — Free",
+      subtitle: "Up to 3 projects, basic task management",
+    },
+    {
+      value: "trial",
+      title: "1-Week Business Trial",
+      subtitle: "Test Business with limits for 7 days",
+    },
+    {
+      value: "business",
+      title: "Business — $12/mo",
+      subtitle: "Unlimited projects, full access, pay now",
+    },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-8">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold">Nexora</h1>
-          <p className="text-muted-foreground mt-2">
-            Create your account
-          </p>
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold">Xora</h1>
+          <p className="text-muted-foreground mt-2">Create your account</p>
         </div>
 
         <div className="bg-white rounded-xl border border-border p-6">
+          <div className="mb-5">
+            <p className="text-sm font-medium mb-2.5">Choose a plan</p>
+            <div className="space-y-2">
+              {planOptions.map((option) => (
+                <label
+                  key={option.value}
+                  className={`block border rounded-lg px-3 py-2.5 cursor-pointer transition-colors ${
+                    planChoice === option.value
+                      ? "border-primary bg-primary/5"
+                      : "border-input hover:border-primary/50"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="plan"
+                    value={option.value}
+                    checked={planChoice === option.value}
+                    onChange={() => setPlanChoice(option.value)}
+                    className="sr-only"
+                  />
+                  <span className="block text-sm font-semibold">
+                    {option.title}
+                  </span>
+                  <span className="block text-xs text-muted-foreground">
+                    {option.subtitle}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="bg-destructive/10 text-destructive text-sm px-3 py-2 rounded-lg">
@@ -138,5 +207,13 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
   );
 }
