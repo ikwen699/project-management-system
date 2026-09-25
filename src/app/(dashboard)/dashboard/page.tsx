@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FolderKanban, CheckCircle, Clock, AlertTriangle } from "lucide-react";
+import { FolderKanban, CheckCircle, Clock, AlertTriangle, Users, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { CardSkeleton } from "@/components/ui/Skeleton";
 
@@ -22,19 +22,34 @@ interface Project {
   endDate: string | null;
 }
 
+interface OrgSummary {
+  id: string;
+  name: string;
+  myRole: string | null;
+  memberCount: number;
+  teamCount: number;
+}
+
 export default function DashboardPage() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [organizations, setOrganizations] = useState<OrgSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/metrics").then((r) => r.json()),
       fetch("/api/projects").then((r) => r.json()),
+      fetch("/api/organizations")
+        .then((r) => r.json())
+        .catch(() => ({ organizations: [] })),
     ])
-      .then(([metricsData, projectsData]) => {
+      .then(([metricsData, projectsData, orgsData]) => {
         setMetrics(metricsData);
         setProjects(Array.isArray(projectsData) ? projectsData.slice(0, 5) : []);
+        setOrganizations(
+          Array.isArray(orgsData.organizations) ? orgsData.organizations : []
+        );
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -85,6 +100,52 @@ export default function DashboardPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="bg-white rounded-xl border border-border p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" /> Members
+              </h2>
+              <Link href="/organizations" className="text-sm text-primary hover:underline">View all</Link>
+            </div>
+            {organizations.length === 0 ? (
+              <div className="text-center py-10 text-muted-foreground">
+                <UserPlus className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">Bring your team together</p>
+                <Link href="/organizations/new" className="mt-2 inline-block bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-primary/90">
+                  Create an organisation
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {organizations.map((org) => (
+                  <div key={org.id} className="p-3 rounded-lg border border-border">
+                    <div className="flex items-center justify-between mb-1">
+                      <Link href={`/organizations/${org.id}`} className="font-medium hover:underline">
+                        {org.name}
+                      </Link>
+                      <span className="text-xs text-muted-foreground">
+                        {org.memberCount} members
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-muted-foreground">
+                        {org.teamCount} teams · You are {org.myRole === "ADMIN" ? "an admin" : "a member"}
+                      </p>
+                      {org.myRole === "ADMIN" && (
+                        <Link
+                          href={`/organizations/${org.id}`}
+                          className="flex items-center gap-1 text-xs text-primary font-medium hover:underline"
+                        >
+                          <UserPlus className="h-3 w-3" /> Invite member
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="bg-white rounded-xl border border-border p-6">

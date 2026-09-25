@@ -8,7 +8,8 @@ type NotificationType =
   | "MENTION_RECEIVED"
   | "PROJECT_MEMBER_ADDED"
   | "MILESTONE_COMPLETED"
-  | "PROJECT_DEADLINE_APPROACHING";
+  | "PROJECT_DEADLINE_APPROACHING"
+  | "ORG_INVITE";
 
 interface CreateNotificationParams {
   type: NotificationType;
@@ -88,5 +89,34 @@ export async function notifyMemberAdded(
     userId: newMemberId,
     senderId,
     projectId,
+  });
+}
+
+export async function notifyOrgInviteSent(
+  userId: string,
+  organizationName: string,
+  senderId: string
+) {
+  await createNotification({
+    type: "ORG_INVITE",
+    title: "Invitation to join an organisation",
+    message: `You have been invited to join "${organizationName}"`,
+    userId,
+    senderId,
+  });
+}
+
+export async function notifyOrgInviteAccepted(
+  inviterId: string,
+  organizationName: string,
+  acceptedBy: string,
+  senderId?: string
+) {
+  await createNotification({
+    type: "ORG_INVITE",
+    title: "Invitation accepted",
+    message: `${acceptedBy} joined "${organizationName}"`,
+    userId: inviterId,
+    senderId,
   });
 }

@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { getEntitlement } from "@/lib/billing";
 import { logProjectCreated } from "@/lib/activity";
+import { getOrgMemberRole } from "@/lib/org-access";
 
 export async function GET() {
   try {
@@ -34,7 +35,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { name, description, status, startDate, endDate } =
+    const { name, description, status, startDate, endDate, organizationId } =
       await request.json();
 
     if (!name) {
@@ -42,6 +43,18 @@ export async function POST(request: Request) {
         { error: "Project name is required" },
         { status: 400 }
       );
+    }
+
+    let orgId: string | null = null;
+    if (organizationId) {
+      const orgRole = await getOrgMemberRole(organizationId, session.user.id);
+      if (!orgRole) {
+        return NextResponse.json(
+          { error: "You must be a member of the selected organisation" },
+          { status: 403 }
+        );
+      }
+      orgId = organizationId;
     }
 
     const entitlement = await getEntitlement(session.user.id);
@@ -78,6 +91,7 @@ export async function POST(request: Request) {
         startDate: startDate || null,
         endDate: endDate || null,
         ownerId: session.user.id,
+        organizationId: orgId,
       });
 
     if (projectError) throw projectError;

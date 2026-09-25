@@ -45,6 +45,14 @@ interface Task {
   assigneeAvatar: string | null;
   estimatedHours: number | null;
   timeSpent: number | null;
+  teamId?: string | null;
+  teamName?: string | null;
+}
+
+interface TeamOption {
+  id: string;
+  name: string;
+  memberCount?: number;
 }
 
 interface Progress {
@@ -103,6 +111,7 @@ export default function ProjectDetailPage() {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
+  const [teams, setTeams] = useState<TeamOption[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [editingProject, setEditingProject] = useState(false);
@@ -126,6 +135,9 @@ export default function ProjectDetailPage() {
   const [taskColumnId, setTaskColumnId] = useState("");
   const [taskAssigneeId, setTaskAssigneeId] = useState("");
   const [taskEstimatedHours, setTaskEstimatedHours] = useState("");
+  const [taskTeamId, setTaskTeamId] = useState("");
+  const [taskTeamMemberIds, setTaskTeamMemberIds] = useState<string[]>([]);
+  const [taskTeamLoading, setTaskTeamLoading] = useState(false);
   const [creatingTask, setCreatingTask] = useState(false);
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -155,6 +167,15 @@ export default function ProjectDetailPage() {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    fetch(`/api/projects/${projectId}/teams`)
+      .then((r) => r.json())
+      .then((data) =>
+        setTeams(Array.isArray(data.teams) ? data.teams : [])
+      )
+      .catch(() => {});
+  }, [projectId]);
 
   useEffect(() => {
     if (!taskMenuId) return;
@@ -310,8 +331,35 @@ export default function ProjectDetailPage() {
     setTaskColumnId(project?.columns?.[0]?.id || "");
     setTaskAssigneeId("");
     setTaskEstimatedHours("");
+    setTaskTeamId("");
+    setTaskTeamMemberIds([]);
     setShowTaskForm(true);
   }
+
+  function handleTaskTeamChange(nextTeamId: string) {
+    setTaskTeamId(nextTeamId);
+    setTaskAssigneeId("");
+    if (!nextTeamId) {
+      setTaskTeamMemberIds([]);
+      return;
+    }
+    setTaskTeamLoading(true);
+    fetch(`/api/teams/${nextTeamId}/members`)
+      .then((r) => r.json())
+      .then((data) => {
+        const ids = Array.isArray(data.members)
+          ? data.members.map((m: any) => m.userId)
+          : [];
+        setTaskTeamMemberIds(ids);
+      })
+      .catch(() => setTaskTeamMemberIds([]))
+      .finally(() => setTaskTeamLoading(false));
+  }
+
+  const taskAssignableMembers =
+    teams.length > 0 && taskTeamId
+      ? members.filter((m) => taskTeamMemberIds.includes(m.userId))
+      : members;
 
   async function handleCreateTask(e: React.FormEvent) {
     e.preventDefault();
@@ -332,6 +380,7 @@ export default function ProjectDetailPage() {
           columnId: taskColumnId,
           assigneeId: taskAssigneeId || null,
           estimatedHours: taskEstimatedHours ? parseFloat(taskEstimatedHours) : null,
+          teamId: taskTeamId || null,
         }),
       });
       if (!res.ok) {
@@ -552,6 +601,9 @@ export default function ProjectDetailPage() {
                     Status
                   </th>
                   <th className="text-left p-3 font-medium text-muted-foreground">
+                    Team
+                  </th>
+                  <th className="text-left p-3 font-medium text-muted-foreground">
                     Priority
                   </th>
                   <th className="text-left p-3 font-medium text-muted-foreground">
@@ -610,6 +662,15 @@ export default function ProjectDetailPage() {
                       >
                         {task.columnName}
                       </span>
+                    </td>
+                    <td className="p-3">
+                      {(task.teamId || task.teamName) && (
+                        <span className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-medium">
+                          {task.teamName ||
+                            teams.find((t) => t.id === task.teamId)?.name ||
+                            "Team"}
+                        </span>
+                      )}
                     </td>
                     <td className="p-3">
                       <span
@@ -983,6 +1044,11 @@ export default function ProjectDetailPage() {
                 <div>
                   <label className="block text-sm font-medium mb-1.5">
                     Assignee
+                    {taskTeamLoading && (
+                      <span className="text-xs text-muted-foreground font-normal ml-1">
+                        loading…
+                      </span>
+                    )}
                   </label>
                   <select
                     value={taskAssigneeId}
@@ -990,14 +1056,38 @@ export default function ProjectDetailPage() {
                     className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
                   >
                     <option value="">Unassigned</option>
-                    {members.map((m) => (
+                    {taskAssignableMembers.map((m) => (
                       <option key={m.userId} value={m.userId}>
                         {m.userName}
                       </option>
                     ))}
                   </select>
+                  {teams.length > 0 && taskTeamId && taskAssignableMembers.length === 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      No members in this team yet.
+                    </p>
+                  )}
                 </div>
               </div>
+              {teams.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">
+                    Team
+                  </label>
+                  <select
+                    value={taskTeamId}
+                    onChange={(e) => handleTaskTeamChange(e.target.value)}
+                    className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  >
+                    <option value="">No team</option>
+                    {teams.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium mb-1.5">
                   Estimated Hours

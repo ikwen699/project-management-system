@@ -15,10 +15,17 @@ interface Member {
   userName: string;
 }
 
+interface TeamOption {
+  id: string;
+  name: string;
+  memberCount?: number;
+}
+
 interface TaskFormProps {
   projectId: string;
   columns: Column[];
   members: Member[];
+  teams?: TeamOption[];
   initialColumnId?: string;
   initialTitle?: string;
   initialDescription?: string;
@@ -26,6 +33,7 @@ interface TaskFormProps {
   initialDeadline?: string;
   initialAssigneeId?: string;
   initialEstimatedHours?: string;
+  initialTeamId?: string;
   taskId?: string;
   onClose: () => void;
   onSaved: () => void;
@@ -35,6 +43,7 @@ export function TaskForm({
   projectId,
   columns,
   members,
+  teams = [],
   initialColumnId,
   initialTitle = "",
   initialDescription = "",
@@ -42,6 +51,7 @@ export function TaskForm({
   initialDeadline = "",
   initialAssigneeId = "",
   initialEstimatedHours = "",
+  initialTeamId = "",
   taskId,
   onClose,
   onSaved,
@@ -51,9 +61,37 @@ export function TaskForm({
   const [priority, setPriority] = useState(initialPriority);
   const [deadline, setDeadline] = useState(initialDeadline);
   const [columnId, setColumnId] = useState(initialColumnId || columns[0]?.id || "");
+  const [teamId, setTeamId] = useState(initialTeamId);
+  const [teamMemberIds, setTeamMemberIds] = useState<string[]>([]);
+  const [teamLoading, setTeamLoading] = useState(false);
   const [assigneeId, setAssigneeId] = useState(initialAssigneeId);
   const [estimatedHours, setEstimatedHours] = useState(initialEstimatedHours);
   const [loading, setLoading] = useState(false);
+
+  function handleTeamChange(nextTeamId: string) {
+    setTeamId(nextTeamId);
+    setAssigneeId("");
+    if (!nextTeamId) {
+      setTeamMemberIds([]);
+      return;
+    }
+    setTeamLoading(true);
+    fetch(`/api/teams/${nextTeamId}/members`)
+      .then((r) => r.json())
+      .then((data: { members: { userId: string }[] }) => {
+        const ids = Array.isArray(data.members)
+          ? data.members.map((m) => m.userId)
+          : [];
+        setTeamMemberIds(ids);
+      })
+      .catch(() => setTeamMemberIds([]))
+      .finally(() => setTeamLoading(false));
+  }
+
+  const assigneeOptions =
+    teams.length > 0 && teamId
+      ? members.filter((m) => teamMemberIds.includes(m.userId))
+      : members;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -78,6 +116,7 @@ export function TaskForm({
           columnId,
           assigneeId: assigneeId || null,
           estimatedHours: estimatedHours ? parseFloat(estimatedHours) : null,
+          teamId: teamId || null,
         }),
       });
 
@@ -143,9 +182,7 @@ export function TaskForm({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1.5">
-                Column
-              </label>
+              <label className="block text-sm font-medium mb-1.5">Column</label>
               <select
                 value={columnId}
                 onChange={(e) => setColumnId(e.target.value)}
@@ -159,9 +196,7 @@ export function TaskForm({
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">
-                Priority
-              </label>
+              <label className="block text-sm font-medium mb-1.5">Priority</label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
@@ -175,11 +210,27 @@ export function TaskForm({
             </div>
           </div>
 
+          {teams.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium mb-1.5">Team</label>
+              <select
+                value={teamId}
+                onChange={(e) => handleTeamChange(e.target.value)}
+                className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">No team</option>
+                {teams.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1.5">
-                Deadline
-              </label>
+              <label className="block text-sm font-medium mb-1.5">Deadline</label>
               <input
                 type="date"
                 value={deadline}
@@ -190,13 +241,23 @@ export function TaskForm({
             <div>
               <label className="block text-sm font-medium mb-1.5">
                 Assignee
+                {teamLoading && (
+                  <span className="text-xs text-muted-foreground font-normal ml-1">
+                    loading…
+                  </span>
+                )}
               </label>
               <UserSelect
-                users={members}
+                users={assigneeOptions}
                 value={assigneeId}
                 onChange={setAssigneeId}
                 placeholder="Unassigned"
               />
+              {teams.length > 0 && teamId && assigneeOptions.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  No members in this team yet.
+                </p>
+              )}
             </div>
           </div>
 

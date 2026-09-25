@@ -11,6 +11,7 @@ import {
   Settings,
   Archive,
   Shield,
+  Building2,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -19,6 +20,7 @@ import { useState } from "react";
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/projects", label: "Projects", icon: FolderKanban },
+  { href: "/organizations", label: "Organizations", icon: Building2 },
   { href: "/calendar", label: "Calendar", icon: Calendar },
   { href: "/notifications", label: "Notifications", icon: Bell },
   { href: "/projects/archived", label: "Archived", icon: Archive },

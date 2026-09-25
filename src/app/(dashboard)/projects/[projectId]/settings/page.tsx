@@ -15,6 +15,7 @@ interface Project {
   startDate: string | null;
   endDate: string | null;
   ownerId: string;
+  organizationId: string | null;
 }
 
 export default function ProjectSettingsPage() {
@@ -29,6 +30,10 @@ export default function ProjectSettingsPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [saving, setSaving] = useState(false);
+  const [organizations, setOrganizations] = useState<
+    { id: string; name: string }[]
+  >([]);
+  const [organizationId, setOrganizationId] = useState("");
 
   useEffect(() => {
     fetch(`/api/projects/${projectId}`)
@@ -40,8 +45,17 @@ export default function ProjectSettingsPage() {
         setStatus(data.status);
         setStartDate(data.startDate ? data.startDate.split("T")[0] : "");
         setEndDate(data.endDate ? data.endDate.split("T")[0] : "");
+        setOrganizationId(data.organizationId || "");
         setLoading(false);
       });
+    fetch("/api/organizations")
+      .then((r) => r.json())
+      .then((data) =>
+        setOrganizations(
+          Array.isArray(data.organizations) ? data.organizations : []
+        )
+      )
+      .catch(() => {});
   }, [projectId]);
 
   async function handleSave(e: React.FormEvent) {
@@ -51,9 +65,13 @@ export default function ProjectSettingsPage() {
       const res = await fetch(`/api/projects/${projectId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description, status, startDate: startDate || null, endDate: endDate || null }),
+        body: JSON.stringify({ name, description, status, startDate: startDate || null, endDate: endDate || null, organizationId: organizationId || null }),
       });
-      if (!res.ok) { toast.error("Failed to update"); return; }
+      if (!res.ok) {
+        const data = await res.json();
+        toast.error(data.error || "Failed to update");
+        return;
+      }
       toast.success("Project updated!");
     } catch {
       toast.error("Something went wrong");
@@ -129,6 +147,15 @@ export default function ProjectSettingsPage() {
               <label className="block text-sm font-medium mb-1.5">End Date</label>
               <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring" />
             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1.5">Organisation</label>
+            <select value={organizationId} onChange={(e) => setOrganizationId(e.target.value)} className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring">
+              <option value="">No organisation (personal)</option>
+              {organizations.map((org) => (
+                <option key={org.id} value={org.id}>{org.name}</option>
+              ))}
+            </select>
           </div>
           <button type="submit" disabled={saving} className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50">
             {saving ? "Saving..." : "Save Changes"}

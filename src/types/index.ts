@@ -37,6 +37,7 @@ export interface Project {
   startDate: Date | null;
   endDate: Date | null;
   ownerId: string;
+  organizationId: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -89,6 +90,7 @@ export interface Task {
   position: number;
   columnId: string;
   projectId: string;
+  teamId: string | null;
   assigneeId: string | null;
   completedAt: Date | null;
   estimatedHours: number | null;
@@ -165,7 +167,8 @@ export type NotificationType =
   | "MENTION_RECEIVED"
   | "PROJECT_MEMBER_ADDED"
   | "MILESTONE_COMPLETED"
-  | "PROJECT_DEADLINE_APPROACHING";
+  | "PROJECT_DEADLINE_APPROACHING"
+  | "ORG_INVITE";
 
 export interface NotificationPreference {
   id: string;
@@ -199,6 +202,7 @@ export interface ActivityLog {
 export interface TaskWithAssignee extends Task {
   assigneeName?: string | null;
   assigneeAvatar?: string | null;
+  teamName?: string | null;
   timeEntries?: TimeEntry[];
   attachments?: FileAttachment[];
 }
@@ -245,4 +249,102 @@ export interface CalendarEvent {
   projectId: string;
   projectName: string;
   color: string;
+}
+
+// ──── Organisations, teams and members ────
+
+export type OrgRole = "ADMIN" | "MEMBER";
+export type TeamRole = "LEAD" | "MEMBER";
+
+export interface Organization {
+  id: string;
+  name: string;
+  type: string;
+  description: string | null;
+  ownerId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Team {
+  id: string;
+  organizationId: string;
+  name: string;
+  type: string;
+  description: string | null;
+  createdAt: Date;
+}
+
+export interface OrganizationMember {
+  id: string;
+  organizationId: string;
+  userId: string;
+  role: OrgRole;
+  joinedAt: Date;
+}
+
+export interface TeamMember {
+  id: string;
+  teamId: string;
+  userId: string;
+  role: TeamRole;
+  joinedAt: Date;
+}
+
+export interface OrganizationInvite {
+  id: string;
+  organizationId: string;
+  organizationName?: string;
+  teamId: string | null;
+  teamName?: string | null;
+  email: string;
+  role: OrgRole;
+  invitedById: string;
+  inviterName?: string;
+  token: string;
+  expiresAt: Date | null;
+  status: InviteStatus;
+  createdAt: Date;
+}
+
+export interface TeamWithMembers extends Team {
+  members: (TeamMember & {
+    userName: string;
+    userEmail: string;
+    userAvatar: string | null;
+  })[];
+  memberCount: number;
+}
+
+export interface OrganizationWithDetails extends Organization {
+  myRole: OrgRole | null;
+  memberCount: number;
+  teams: TeamWithMembers[];
+  members: (OrganizationMember & {
+    userName: string;
+    userEmail: string;
+    userAvatar: string | null;
+  })[];
+  pendingInvites: OrganizationInvite[];
+}
+
+export interface TeamMemberWithUser {
+  id: string;
+  teamId: string;
+  userId: string;
+  role: TeamRole;
+  joinedAt: Date;
+  userName: string;
+  userEmail: string;
+  userAvatar: string | null;
+}
+
+export interface TeamListing extends Team {
+  memberCount: number;
+}
+
+export interface OrgListing extends Organization {
+  myRole: OrgRole | null;
+  memberCount: number;
+  teamCount: number;
 }

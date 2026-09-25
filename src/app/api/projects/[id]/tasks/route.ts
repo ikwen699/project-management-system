@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { notifyTaskAssigned } from "@/lib/notifications";
 import { logTaskCreated } from "@/lib/activity";
+import { isTeamMember, resolveTaskTeam } from "@/lib/team-validation";
 
 export async function GET(
   request: Request,
@@ -50,12 +51,26 @@ export async function POST(
     }
 
     const { id } = await params;
-    const { title, description, priority, deadline, columnId, assigneeId } =
+    const { title, description, priority, deadline, columnId, assigneeId, teamId } =
       await request.json();
 
     if (!title || !columnId) {
       return NextResponse.json(
         { error: "Title and column are required" },
+        { status: 400 }
+      );
+    }
+
+    const resolvedTeam = await resolveTaskTeam(id, teamId ? String(teamId) : null);
+    if (resolvedTeam.error) {
+      return NextResponse.json({ error: resolvedTeam.error }, { status: 400 });
+    }
+    if (
+      assigneeId &&
+      !(await isTeamMember(resolvedTeam.teamId, String(assigneeId)))
+    ) {
+      return NextResponse.json(
+        { error: "Assignee must be a member of the team" },
         { status: 400 }
       );
     }
@@ -81,6 +96,7 @@ export async function POST(
         columnId,
         projectId: id,
         assigneeId: assigneeId || null,
+        teamId: resolvedTeam.teamId,
       })
       .select()
       .single();

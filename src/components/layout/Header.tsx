@@ -83,6 +83,7 @@ export function Header() {
             <nav className="space-y-1">
               <a href="/dashboard" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Dashboard</a>
               <a href="/projects" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Projects</a>
+              <a href="/organizations" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Organizations</a>
               <a href="/calendar" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Calendar</a>
               <a href="/notifications" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Notifications</a>
             </nav>

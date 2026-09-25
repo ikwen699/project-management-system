@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { notifyTaskStatusChanged } from "@/lib/notifications";
+import { isTeamMember, resolveTaskTeam } from "@/lib/team-validation";
 
 export async function GET(
   _request: Request,
@@ -51,7 +52,7 @@ export async function PUT(
 
     const { data: task } = await supabase
       .from("Task")
-      .select("columnId, projectId")
+      .select("columnId, projectId, teamId, assigneeId, title")
       .eq("id", id)
       .single();
 
@@ -108,7 +109,7 @@ export async function PUT(
       }
     }
 
-    if (body.title !== undefined || body.description !== undefined || body.priority !== undefined || body.deadline !== undefined || body.assigneeId !== undefined || body.estimatedHours !== undefined) {
+    if (body.title !== undefined || body.description !== undefined || body.priority !== undefined || body.deadline !== undefined || body.assigneeId !== undefined || body.estimatedHours !== undefined || body.teamId !== undefined) {
       const updates: Record<string, any> = { updatedAt: new Date().toISOString() };
       if (body.title !== undefined) updates.title = body.title;
       if (body.description !== undefined) updates.description = body.description;
@@ -116,6 +117,31 @@ export async function PUT(
       if (body.deadline !== undefined) updates.deadline = body.deadline;
       if (body.assigneeId !== undefined) updates.assigneeId = body.assigneeId;
       if (body.estimatedHours !== undefined) updates.estimatedHours = body.estimatedHours;
+
+      if (body.teamId !== undefined) {
+        const resolvedTeam = await resolveTaskTeam(
+          task.projectId,
+          body.teamId ? String(body.teamId) : null
+        );
+        if (resolvedTeam.error) {
+          return NextResponse.json({ error: resolvedTeam.error }, { status: 400 });
+        }
+        updates.teamId = resolvedTeam.teamId;
+
+        const currentAssignee = body.assigneeId !== undefined ? body.assigneeId : task.assigneeId;
+        if (!(await isTeamMember(resolvedTeam.teamId, currentAssignee || null))) {
+          updates.assigneeId = null;
+        }
+      } else if (
+        body.assigneeId !== undefined &&
+        body.assigneeId &&
+        !(await isTeamMember(task.teamId ?? null, String(body.assigneeId)))
+      ) {
+        return NextResponse.json(
+          { error: "Assignee must be a member of the team" },
+          { status: 400 }
+        );
+      }
 
       await supabase
         .from("Task")

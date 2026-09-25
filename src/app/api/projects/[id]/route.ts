@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+import { getOrgMemberRole } from "@/lib/org-access";
 
 export async function GET(
   _request: Request,
@@ -114,7 +115,7 @@ export async function PUT(
       }
     }
 
-    const { name, description, status, startDate, endDate } =
+    const { name, description, status, startDate, endDate, organizationId } =
       await request.json();
 
     const updates: Record<string, any> = { updatedAt: new Date().toISOString() };
@@ -123,6 +124,18 @@ export async function PUT(
     if (status !== undefined) updates.status = status;
     if (startDate !== undefined) updates.startDate = startDate;
     if (endDate !== undefined) updates.endDate = endDate;
+    if (organizationId !== undefined) {
+      if (organizationId) {
+        const orgRole = await getOrgMemberRole(organizationId, session.user.id);
+        if (!orgRole) {
+          return NextResponse.json(
+            { error: "You must be a member of the selected organisation" },
+            { status: 403 }
+          );
+        }
+      }
+      updates.organizationId = organizationId || null;
+    }
 
     const { error } = await supabase
       .from("Project")

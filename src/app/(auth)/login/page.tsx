@@ -9,6 +9,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [redirect] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return new URLSearchParams(window.location.search).get("redirect");
+  });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -27,7 +31,10 @@ export default function LoginPage() {
         return;
       }
 
-      window.location.href = "/dashboard";
+      window.location.href =
+        redirect && redirect.startsWith("/")
+          ? redirect
+          : "/dashboard";
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -89,7 +96,14 @@ export default function LoginPage() {
 
           <div className="mt-4 text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-primary hover:underline font-medium">
+            <Link
+              href={
+                redirect
+                  ? "/register?redirect=" + encodeURIComponent(redirect)
+                  : "/register"
+              }
+              className="text-primary hover:underline font-medium"
+            >
               Sign up
             </Link>
           </div>

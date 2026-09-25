@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -15,6 +15,22 @@ export default function NewProjectPage() {
   const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [organizations, setOrganizations] = useState<
+    { id: string; name: string }[]
+  >([]);
+  const [organizationId, setOrganizationId] = useState("");
+
+  useEffect(() => {
+    fetch("/api/organizations")
+      .then((r) => r.json())
+      .then((data) =>
+        setOrganizations(
+          Array.isArray(data.organizations) ? data.organizations : []
+        )
+      )
+      .catch(() => {});
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -31,6 +47,7 @@ export default function NewProjectPage() {
           status,
           startDate: startDate || null,
           endDate: endDate || null,
+          organizationId: organizationId || null,
         }),
       });
 
@@ -132,6 +149,29 @@ export default function NewProjectPage() {
               <option value="ACTIVE">Active</option>
               <option value="ON_HOLD">On Hold</option>
             </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1.5">
+              Organisation{" "}
+              <span className="text-muted-foreground font-normal">(optional)</span>
+            </label>
+            <select
+              value={organizationId}
+              onChange={(e) => setOrganizationId(e.target.value)}
+              className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="">No organisation (personal)</option>
+              {organizations.map((org) => (
+                <option key={org.id} value={org.id}>
+                  {org.name}
+                </option>
+              ))}
+            </select>
+            {organizations.length === 0 && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Join or create an organization to add team assignment in tasks.
+              </p>
+            )}
           </div>
           <div className="flex gap-3 pt-2">
             <button

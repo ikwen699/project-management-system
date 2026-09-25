@@ -38,11 +38,18 @@ interface Member {
   userName: string;
 }
 
+interface Team {
+  id: string;
+  name: string;
+  memberCount: number;
+}
+
 export default function BoardPage() {
   const params = useParams();
   const projectId = params.projectId as string;
   const [columns, setColumns] = useState<Column[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [showTaskForm, setShowTaskForm] = useState(false);
@@ -50,12 +57,16 @@ export default function BoardPage() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   const loadData = useCallback(async () => {
-    const [cols, mems] = await Promise.all([
+    const [cols, mems, teamRes] = await Promise.all([
       fetch(`/api/projects/${projectId}/columns`).then((r) => r.json()),
       fetch(`/api/projects/${projectId}/members`).then((r) => r.json()),
+      fetch(`/api/projects/${projectId}/teams`)
+        .then((r) => r.json())
+        .catch(() => ({ teams: [] })),
     ]);
     setColumns(cols);
     setMembers(mems);
+    setTeams(Array.isArray(teamRes?.teams) ? teamRes.teams : []);
     setLoading(false);
   }, [projectId]);
 
@@ -214,6 +225,7 @@ export default function BoardPage() {
           projectId={projectId}
           columns={columns}
           members={members}
+          teams={teams}
           initialColumnId={formColumnId}
           onClose={() => setShowTaskForm(false)}
           onSaved={loadData}

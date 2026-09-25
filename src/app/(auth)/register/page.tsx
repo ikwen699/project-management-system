@@ -8,6 +8,7 @@ type PlanChoice = "starter" | "trial" | "business";
 
 function RegisterForm() {
   const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,6 +60,10 @@ function RegisterForm() {
 
       if (planChoice === "business") {
         router.push("/login?registered=true&plan=business");
+      } else if (redirect && redirect.startsWith("/")) {
+        router.push(
+          "/login?registered=true&redirect=" + encodeURIComponent(redirect)
+        );
       } else {
         router.push("/login?registered=true");
       }
@@ -200,7 +205,14 @@ function RegisterForm() {
 
           <div className="mt-4 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline font-medium">
+            <Link
+              href={
+                redirect
+                  ? "/login?redirect=" + encodeURIComponent(redirect)
+                  : "/login"
+              }
+              className="text-primary hover:underline font-medium"
+            >
               Sign in
             </Link>
           </div>

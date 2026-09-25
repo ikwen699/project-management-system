@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 const publicRoutes = ["/", "/login", "/register", "/forgot-password", "/invite"];
+const signedInRedirectRoutes = ["/", "/login", "/register", "/forgot-password"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -20,7 +21,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (token && isPublicRoute) {
+  // Signed-in users skip the auth pages, but /invite stays reachable so they
+  // can accept an invitation without being bounced to /dashboard.
+  const isSignedInRedirectRoute = signedInRedirectRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route + "/")
+  );
+
+  if (token && isSignedInRedirectRoute) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
@@ -28,5 +35,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|sw.js).*)"],
 };
