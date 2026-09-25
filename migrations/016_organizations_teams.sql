@@ -118,7 +118,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO "ProjectMember" (id, "userId", "projectId", role, "joinedAt")
   SELECT gen_random_uuid()::text, NEW."userId", p.id,
-         CASE WHEN NEW.role = 'ADMIN' THEN 'ADMIN' ELSE 'MEMBER' END,
+         (CASE WHEN NEW.role = 'ADMIN' THEN 'ADMIN' ELSE 'MEMBER' END)::member_role,
          NEW."joinedAt"
   FROM "Project" p
   WHERE p."organizationId" = NEW."organizationId"
@@ -139,7 +139,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   IF OLD.role IS NOT DISTINCT FROM NEW.role THEN RETURN NEW; END IF;
   UPDATE "ProjectMember" pm
-  SET role = CASE WHEN NEW.role = 'ADMIN' THEN 'ADMIN' ELSE 'MEMBER' END
+  SET role = (CASE WHEN NEW.role = 'ADMIN' THEN 'ADMIN' ELSE 'MEMBER' END)::member_role
   FROM "Project" p
   WHERE p."organizationId" = NEW."organizationId"
     AND pm."projectId" = p.id
@@ -179,7 +179,7 @@ BEGIN
      AND NEW."organizationId" IS DISTINCT FROM OLD."organizationId" THEN
     INSERT INTO "ProjectMember" (id, "userId", "projectId", role, "joinedAt")
     SELECT gen_random_uuid()::text, om."userId", NEW.id,
-           CASE WHEN om.role = 'ADMIN' THEN 'ADMIN' ELSE 'MEMBER' END,
+           (CASE WHEN om.role = 'ADMIN' THEN 'ADMIN' ELSE 'MEMBER' END)::member_role,
            NOW()
     FROM "OrganizationMember" om
     WHERE om."organizationId" = NEW."organizationId"
