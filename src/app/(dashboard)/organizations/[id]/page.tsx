@@ -116,7 +116,7 @@ export default function OrganizationDetailPage() {
     loadData();
   }, [loadData]);
 
-  // Debounced email search scoped to Xora users (exact matches always).
+  // Debounced name/email search scoped to Xora users not yet in this org.
   useEffect(() => {
     clearTimeout(searchTimeout.current);
     if (!inviteEmail || inviteEmail.trim().length < 2 || !inviteOpen) {
@@ -141,6 +141,10 @@ export default function OrganizationDetailPage() {
     const invitedEmail = inviteEmail.trim();
     if (!invitedEmail) {
       toast.error("Enter an email address");
+      return;
+    }
+    if (!invitedEmail.includes("@")) {
+      toast.error("Pick a person from the suggestions or enter a valid email address");
       return;
     }
     setInviteLoading(true);
@@ -168,7 +172,7 @@ export default function OrganizationDetailPage() {
       setSearchResults([]);
       loadData();
       if (data.token) {
-        // Unknown email: show the shareable invite link instead of closing.
+        // Any invite returns a token: show the shareable link panel instead of closing.
         setInviteResult({
           email: invitedEmail,
           token: data.token,
@@ -716,7 +720,7 @@ export default function OrganizationDetailPage() {
                   <Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                   <div className="text-sm text-emerald-800 min-w-0">
                     <p className="font-medium break-all">
-                      Invite created for {inviteResult.email}
+                      Invitation for {inviteResult.email}
                     </p>
                     <p className="mt-0.5 text-emerald-700 break-words">
                       {inviteResult.message}
@@ -759,12 +763,12 @@ export default function OrganizationDetailPage() {
             ) : (
             <form onSubmit={handleInvite} className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1.5">Email</label>
+                <label className="block text-sm font-medium mb-1.5">Name or email</label>
                 <input
-                  type="email"
+                  type="text"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="teammate@example.com"
+                  placeholder="Search by name or email…"
                   className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
                   required
                 />
@@ -850,8 +854,8 @@ export default function OrganizationDetailPage() {
                 </button>
               </div>
               <p className="text-xs text-muted-foreground text-center">
-                Existing Xora users are added instantly; others get a shareable
-                invite link.
+                Existing users get an in-app invitation to accept; others get a
+                shareable invite link.
               </p>
             </form>
             )}

@@ -1,0 +1,8 @@
+▲ Next.js 16.3.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.151.234.246:3000
+- Environments: .env
+✓ Ready in 2.1s
+✓ Running next.config.ts took 141ms
+
+ GET /api/notifications/unread-count 401 in 1088ms (next.js: 980ms, application-code: 108ms)

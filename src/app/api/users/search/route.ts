@@ -9,11 +9,14 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const email = String(searchParams.get("email") || "").trim().toLowerCase();
+  const q = String(searchParams.get("email") || searchParams.get("q") || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[%_,()"]/g, "");
   const teamId = searchParams.get("teamId");
   const organizationId = searchParams.get("organizationId");
 
-  if (!email || email.length < 2) {
+  if (!q || q.length < 2) {
     return NextResponse.json({ users: [] });
   }
 
@@ -44,8 +47,8 @@ export async function GET(request: Request) {
   const { data: users, error } = await supabase
     .from("User")
     .select("id, name, email, avatar")
-    .ilike("email", `%${email.replace(/\*/g, "")}%`)
-    .limit(10);
+    .or(`name.ilike."%${q}%",email.ilike."%${q}%"`)
+    .limit(20);
 
   if (error) {
     return NextResponse.json(
@@ -54,13 +57,24 @@ export async function GET(request: Request) {
     );
   }
 
-  const allowed = orgMembersUserIds
-    ? (users || []).filter((u: any) => orgMembersUserIds!.includes(u.id))
-    : (users || []);
+  // Invite flow (org scope): suggest Xora users who are NOT in the org yet.
+  if (organizationId && !teamId) {
+    const candidates = (users || [])
+      .filter((u: any) => !orgMembersUserIds!.includes(u.id))
+      .slice(0, 10);
+    return NextResponse.json({ users: candidates });
+  }
 
-  // Exact matches are always safe to suggest (own teammates / Xora users).
-  const exact = (users || []).filter((u: any) => u.email === email);
-  const merged = [...exact, ...allowed.filter((u: any) => u.email !== email)];
+  // Team scope: only existing org members (assignee pickers); exact matches
+  // are always safe to suggest (own teammates / Xora users).
+  if (orgMembersUserIds) {
+    const exact = (users || []).filter((u: any) => u.email === q);
+    const allowed = (users || []).filter((u: any) =>
+      orgMembersUserIds!.includes(u.id)
+    );
+    const merged = [...exact, ...allowed.filter((u: any) => u.email !== q)];
+    return NextResponse.json({ users: merged.slice(0, 10) });
+  }
 
-  return NextResponse.json({ users: merged });
+  return NextResponse.json({ users: (users || []).slice(0, 10) });
 }

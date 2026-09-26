@@ -95,12 +95,14 @@ export async function notifyMemberAdded(
 export async function notifyOrgInviteSent(
   userId: string,
   organizationName: string,
-  senderId: string
+  senderId: string,
+  link?: string
 ) {
   await createNotification({
     type: "ORG_INVITE",
     title: "Invitation to join an organisation",
     message: `You have been invited to join "${organizationName}"`,
+    link,
     userId,
     senderId,
   });
@@ -116,6 +118,21 @@ export async function notifyOrgInviteAccepted(
     type: "ORG_INVITE",
     title: "Invitation accepted",
     message: `${acceptedBy} joined "${organizationName}"`,
+    userId: inviterId,
+    senderId,
+  });
+}
+
+export async function notifyOrgInviteDeclined(
+  inviterId: string,
+  organizationName: string,
+  declinedBy: string,
+  senderId?: string
+) {
+  await createNotification({
+    type: "ORG_INVITE",
+    title: "Invitation declined",
+    message: `${declinedBy} declined your invitation to join "${organizationName}"`,
     userId: inviterId,
     senderId,
   });

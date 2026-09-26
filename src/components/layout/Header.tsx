@@ -13,11 +13,25 @@ export function Header() {
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/notifications/unread-count")
-      .then((r) => r.json())
-      .then((data) => setUnreadCount(data.count || 0))
-      .catch(() => {});
-  }, []);
+    if (!session?.user?.id) return;
+    const fetchCount = () => {
+      fetch("/api/notifications/unread-count")
+        .then((r) => r.json())
+        .then((data) => setUnreadCount(data.count || 0))
+        .catch(() => {});
+    };
+    fetchCount();
+    const interval = setInterval(fetchCount, 30000);
+    const onFocus = () => fetchCount();
+    const onNotificationsUpdated = () => fetchCount();
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("notifications:updated", onNotificationsUpdated);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("notifications:updated", onNotificationsUpdated);
+    };
+  }, [session?.user?.id]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

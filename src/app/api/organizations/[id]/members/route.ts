@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import {
-  addUserToOrgAndTeam,
   getOrgMemberRole,
   isOrgAdmin,
   isSuperAdmin,
@@ -95,36 +94,6 @@ export async function POST(
     }
   }
 
-  const { data: existingUser } = await supabase
-    .from("User")
-    .select("id, name, email")
-    .eq("email", email)
-    .maybeSingle();
-
-  if (existingUser) {
-    await addUserToOrgAndTeam({
-      organizationId,
-      teamId,
-      userId: existingUser.id,
-      role: orgRole,
-      teamRole,
-    });
-    const { data: org } = await supabase
-      .from("Organization")
-      .select("name")
-      .eq("id", organizationId)
-      .maybeSingle();
-    await notifyOrgInviteSent(
-      existingUser.id,
-      org?.name || "your organisation",
-      session.user.id
-    );
-    return NextResponse.json(
-      { message: `${email} is already a user and was added as a member.` },
-      { status: 201 }
-    );
-  }
-
   const { data: org } = await supabase
     .from("Organization")
     .select("name, type")
@@ -132,6 +101,41 @@ export async function POST(
     .maybeSingle();
   if (!org) {
     return NextResponse.json({ error: "Organisation not found" }, { status: 404 });
+  }
+
+  const { data: existingUser } = await supabase
+    .from("User")
+    .select("id, name, email")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (existingUser) {
+    const { data: alreadyMember } = await supabase
+      .from("OrganizationMember")
+      .select("id")
+      .eq("organizationId", organizationId)
+      .eq("userId", existingUser.id)
+      .maybeSingle();
+    if (alreadyMember) {
+      return NextResponse.json(
+        { error: `${email} is already a member of this organisation.` },
+        { status: 400 }
+      );
+    }
+  }
+
+  const { data: dupInvite } = await supabase
+    .from("Invite")
+    .select("id")
+    .eq("organizationId", organizationId)
+    .eq("email", email)
+    .eq("status", "PENDING")
+    .maybeSingle();
+  if (dupInvite) {
+    return NextResponse.json(
+      { error: `An invite for ${email} is already pending — copy it from Pending invites below.` },
+      { status: 400 }
+    );
   }
 
   const token = crypto.randomUUID();
@@ -150,6 +154,22 @@ export async function POST(
 
   if (inviteError) {
     return NextResponse.json({ error: inviteError.message }, { status: 400 });
+  }
+
+  if (existingUser) {
+    await notifyOrgInviteSent(
+      existingUser.id,
+      org.name,
+      session.user.id,
+      `/invite?token=${token}`
+    );
+    return NextResponse.json(
+      {
+        token,
+        message: `Invitation sent to ${email} — they'll get a notification in Xora.`,
+      },
+      { status: 201 }
+    );
   }
 
   const ok = await sendInviteEmail({

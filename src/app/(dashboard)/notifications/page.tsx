@@ -24,11 +24,22 @@ const typeIcons: Record<string, string> = {
   PROJECT_MEMBER_ADDED: "👥",
   MILESTONE_COMPLETED: "🏁",
   PROJECT_DEADLINE_APPROACHING: "📅",
+  ORG_INVITE: "📨",
 };
+
+function inviteTokenFrom(link: string | null): string | null {
+  if (!link || !link.startsWith("/invite")) return null;
+  try {
+    return new URL(link, "http://localhost").searchParams.get("token");
+  } catch {
+    return null;
+  }
+}
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actingId, setActingId] = useState<string | null>(null);
 
   function loadNotifications() {
     fetch("/api/notifications")
@@ -47,12 +58,37 @@ export default function NotificationsPage() {
       body: JSON.stringify({ notificationId: id, isRead: true }),
     });
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
+    window.dispatchEvent(new CustomEvent("notifications:updated"));
+  }
+
+  async function actOnInvite(notification: Notification, action: "accept" | "decline") {
+    const token = inviteTokenFrom(notification.link);
+    if (!token || actingId) return;
+    setActingId(`${notification.id}:${action}`);
+    try {
+      const res = await fetch(`/api/invites/${token}/${action}`, { method: "POST" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast.error(data.error || "Failed to respond to the invitation");
+        return;
+      }
+      if (action === "accept") {
+        toast.success("You joined the organisation");
+      } else {
+        toast.success("Invitation declined");
+      }
+      await markAsRead(notification.id);
+      loadNotifications();
+    } finally {
+      setActingId(null);
+    }
   }
 
   async function markAllAsRead() {
     await fetch("/api/notifications/read-all", { method: "PUT" });
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
     toast.success("All notifications marked as read");
+    window.dispatchEvent(new CustomEvent("notifications:updated"));
   }
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
@@ -103,9 +139,42 @@ export default function NotificationsPage() {
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">{new Date(notification.createdAt).toLocaleString()}</p>
-                {notification.link && (
-                  <a href={notification.link} className="text-xs text-primary hover:underline mt-1 inline-block" onClick={() => markAsRead(notification.id)}>View project</a>
-                )}
+                {(() => {
+                  const token = inviteTokenFrom(notification.link);
+                  if (notification.type === "ORG_INVITE" && token) {
+                    return (
+                      <div className="flex flex-wrap items-center gap-2 mt-2">
+                        <button
+                          onClick={() => actOnInvite(notification, "accept")}
+                          disabled={!!actingId}
+                          className="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
+                        >
+                          {actingId === `${notification.id}:accept` ? "Joining…" : "Accept invitation"}
+                        </button>
+                        <button
+                          onClick={() => markAsRead(notification.id)}
+                          disabled={!!actingId}
+                          className="px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-muted-foreground hover:bg-muted disabled:opacity-50 transition-colors"
+                        >
+                          Remind me later
+                        </button>
+                        <button
+                          onClick={() => actOnInvite(notification, "decline")}
+                          disabled={!!actingId}
+                          className="px-3 py-1.5 rounded-lg border border-border text-xs font-medium text-destructive hover:bg-destructive/10 disabled:opacity-50 transition-colors"
+                        >
+                          {actingId === `${notification.id}:decline` ? "Declining…" : "Decline"}
+                        </button>
+                      </div>
+                    );
+                  }
+                  if (notification.link) {
+                    return (
+                      <a href={notification.link} className="text-xs text-primary hover:underline mt-1 inline-block" onClick={() => markAsRead(notification.id)}>View project</a>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
             </div>
           ))}
