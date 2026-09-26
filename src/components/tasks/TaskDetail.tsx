@@ -58,6 +58,8 @@ interface TaskDetailProps {
   onClose: () => void;
   onSaved: () => void;
   onDeleted: () => void;
+  projectStartDate?: string | null;
+  projectEndDate?: string | null;
 }
 
 function formatDuration(minutes: number | null): string {
@@ -83,6 +85,8 @@ export function TaskDetail({
   onClose,
   onSaved,
   onDeleted,
+  projectStartDate,
+  projectEndDate,
 }: TaskDetailProps) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(task.title);
@@ -168,6 +172,29 @@ export function TaskDetail({
   }, [runningEntry]);
 
   async function handleSave() {
+    if (deadline) {
+      const taskDate = new Date(deadline);
+      taskDate.setHours(0, 0, 0, 0);
+
+      if (projectStartDate) {
+        const start = new Date(projectStartDate);
+        start.setHours(0, 0, 0, 0);
+        if (taskDate < start) {
+          toast.error(`Deadline must be on or after the project start date (${start.toISOString().split("T")[0]})`);
+          return;
+        }
+      }
+
+      if (projectEndDate) {
+        const end = new Date(projectEndDate);
+        end.setHours(0, 0, 0, 0);
+        if (taskDate > end) {
+          toast.error(`Deadline must be on or before the project end date (${end.toISOString().split("T")[0]})`);
+          return;
+        }
+      }
+    }
+
     setLoading(true);
     try {
       const res = await fetch(`/api/tasks/${task.id}`, {
@@ -183,7 +210,8 @@ export function TaskDetail({
         }),
       });
       if (!res.ok) {
-        toast.error("Failed to update");
+        const data = await res.json();
+        toast.error(data.error || "Failed to update");
         return;
       }
       toast.success("Task updated");
@@ -405,6 +433,8 @@ export function TaskDetail({
                 type="date"
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
+                min={projectStartDate ? projectStartDate.split("T")[0] : undefined}
+                max={projectEndDate ? projectEndDate.split("T")[0] : undefined}
                 className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none"
               />
             </div>

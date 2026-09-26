@@ -55,18 +55,25 @@ export default function BoardPage() {
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [formColumnId, setFormColumnId] = useState<string>("");
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [projectStartDate, setProjectStartDate] = useState<string | null>(null);
+  const [projectEndDate, setProjectEndDate] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
-    const [cols, mems, teamRes] = await Promise.all([
+    const [cols, mems, teamRes, projectRes] = await Promise.all([
       fetch(`/api/projects/${projectId}/columns`).then((r) => r.json()),
       fetch(`/api/projects/${projectId}/members`).then((r) => r.json()),
       fetch(`/api/projects/${projectId}/teams`)
         .then((r) => r.json())
         .catch(() => ({ teams: [] })),
+      fetch(`/api/projects/${projectId}`).then((r) => r.json()).catch(() => null),
     ]);
     setColumns(cols);
     setMembers(mems);
     setTeams(Array.isArray(teamRes?.teams) ? teamRes.teams : []);
+    if (projectRes) {
+      setProjectStartDate(projectRes.startDate);
+      setProjectEndDate(projectRes.endDate);
+    }
     setLoading(false);
   }, [projectId]);
 
@@ -229,6 +236,8 @@ export default function BoardPage() {
           initialColumnId={formColumnId}
           onClose={() => setShowTaskForm(false)}
           onSaved={loadData}
+          projectStartDate={projectStartDate}
+          projectEndDate={projectEndDate}
         />
       )}
 
@@ -240,6 +249,8 @@ export default function BoardPage() {
           onClose={() => setSelectedTask(null)}
           onSaved={loadData}
           onDeleted={loadData}
+          projectStartDate={projectStartDate}
+          projectEndDate={projectEndDate}
         />
       )}
     </div>

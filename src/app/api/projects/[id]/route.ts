@@ -124,6 +124,35 @@ export async function PUT(
     if (status !== undefined) updates.status = status;
     if (startDate !== undefined) updates.startDate = startDate;
     if (endDate !== undefined) updates.endDate = endDate;
+
+    if ((startDate !== undefined || endDate !== undefined) && (startDate || endDate)) {
+      let checkStart = startDate;
+      let checkEnd = endDate;
+
+      if (checkStart === undefined || checkEnd === undefined) {
+        const { data: current } = await supabase
+          .from("Project")
+          .select("startDate, endDate")
+          .eq("id", id)
+          .single();
+        if (current) {
+          if (checkStart === undefined) checkStart = current.startDate;
+          if (checkEnd === undefined) checkEnd = current.endDate;
+        }
+      }
+
+      if (checkStart && checkEnd) {
+        const start = new Date(checkStart);
+        const end = new Date(checkEnd);
+        if (start > end) {
+          return NextResponse.json(
+            { error: "Project start date must be before or equal to end date" },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
     if (organizationId !== undefined) {
       if (organizationId) {
         const orgRole = await getOrgMemberRole(organizationId, session.user.id);

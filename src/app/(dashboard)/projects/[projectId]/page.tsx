@@ -367,6 +367,28 @@ export default function ProjectDetailPage() {
       toast.error("Title is required");
       return;
     }
+    if (taskDeadline && project) {
+      const taskDate = new Date(taskDeadline);
+      taskDate.setHours(0, 0, 0, 0);
+
+      if (project.startDate) {
+        const start = new Date(project.startDate);
+        start.setHours(0, 0, 0, 0);
+        if (taskDate < start) {
+          toast.error(`Deadline must be on or after the project start date (${start.toISOString().split("T")[0]})`);
+          return;
+        }
+      }
+
+      if (project.endDate) {
+        const end = new Date(project.endDate);
+        end.setHours(0, 0, 0, 0);
+        if (taskDate > end) {
+          toast.error(`Deadline must be on or before the project end date (${end.toISOString().split("T")[0]})`);
+          return;
+        }
+      }
+    }
     setCreatingTask(true);
     try {
       const res = await fetch(`/api/projects/${projectId}/tasks`, {
@@ -846,6 +868,7 @@ export default function ProjectDetailPage() {
                     type="date"
                     value={editStartDate}
                     onChange={(e) => setEditStartDate(e.target.value)}
+                    max={editEndDate || undefined}
                     className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
                   />
                 </div>
@@ -857,6 +880,7 @@ export default function ProjectDetailPage() {
                     type="date"
                     value={editEndDate}
                     onChange={(e) => setEditEndDate(e.target.value)}
+                    min={editStartDate || undefined}
                     className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
                   />
                 </div>
@@ -1038,6 +1062,8 @@ export default function ProjectDetailPage() {
                     type="date"
                     value={taskDeadline}
                     onChange={(e) => setTaskDeadline(e.target.value)}
+                    min={project?.startDate ? project.startDate.split("T")[0] : undefined}
+                    max={project?.endDate ? project.endDate.split("T")[0] : undefined}
                     className="w-full border border-input rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
                   />
                 </div>

@@ -60,6 +60,45 @@ export async function PUT(
       return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
 
+    if (body.deadline !== undefined && body.deadline) {
+      const { data: project } = await supabase
+        .from("Project")
+        .select("startDate, endDate")
+        .eq("id", task.projectId)
+        .single();
+
+      if (project) {
+        const taskDate = new Date(body.deadline);
+        taskDate.setHours(0, 0, 0, 0);
+
+        if (project.startDate) {
+          const start = new Date(project.startDate);
+          start.setHours(0, 0, 0, 0);
+          if (taskDate < start) {
+            return NextResponse.json(
+              {
+                error: `Task deadline must be on or after the project start date (${start.toISOString().split("T")[0]})`,
+              },
+              { status: 400 }
+            );
+          }
+        }
+
+        if (project.endDate) {
+          const end = new Date(project.endDate);
+          end.setHours(0, 0, 0, 0);
+          if (taskDate > end) {
+            return NextResponse.json(
+              {
+                error: `Task deadline must be on or before the project end date (${end.toISOString().split("T")[0]})`,
+              },
+              { status: 400 }
+            );
+          }
+        }
+      }
+    }
+
     const { data: doneCol } = await supabase
       .from("Column")
       .select("id")

@@ -61,6 +61,47 @@ export async function POST(
       );
     }
 
+    const { data: project } = await supabase
+      .from("Project")
+      .select("startDate, endDate")
+      .eq("id", id)
+      .single();
+
+    if (!project) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    if (deadline) {
+      const taskDate = new Date(deadline);
+      taskDate.setHours(0, 0, 0, 0);
+
+      if (project.startDate) {
+        const start = new Date(project.startDate);
+        start.setHours(0, 0, 0, 0);
+        if (taskDate < start) {
+          return NextResponse.json(
+            {
+              error: `Task deadline must be on or after the project start date (${start.toISOString().split("T")[0]})`,
+            },
+            { status: 400 }
+          );
+        }
+      }
+
+      if (project.endDate) {
+        const end = new Date(project.endDate);
+        end.setHours(0, 0, 0, 0);
+        if (taskDate > end) {
+          return NextResponse.json(
+            {
+              error: `Task deadline must be on or before the project end date (${end.toISOString().split("T")[0]})`,
+            },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
     const resolvedTeam = await resolveTaskTeam(id, teamId ? String(teamId) : null);
     if (resolvedTeam.error) {
       return NextResponse.json({ error: resolvedTeam.error }, { status: 400 });

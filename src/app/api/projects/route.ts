@@ -45,6 +45,17 @@ export async function POST(request: Request) {
       );
     }
 
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      if (start > end) {
+        return NextResponse.json(
+          { error: "Project start date must be before or equal to end date" },
+          { status: 400 }
+        );
+      }
+    }
+
     let orgId: string | null = null;
     if (organizationId) {
       const orgRole = await getOrgMemberRole(organizationId, session.user.id);
