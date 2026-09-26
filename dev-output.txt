@@ -88,3 +88,4 @@ Get user feedback error: {
  GET /api/feedback 500 in 1717ms (next.js: 6ms, application-code: 1710ms)
  GET /api/notifications/unread-count 200 in 397ms (next.js: 8ms, application-code: 389ms)
  GET /api/notifications/unread-count 200 in 78s (next.js: 7ms, application-code: 78s)
+[browser] Uncaught Error: Internal Next.js error: Router action dispatched before initialization.
