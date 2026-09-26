@@ -16,6 +16,7 @@ import {
   Shield,
   Loader2,
   ArrowUpRight,
+  Link2,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { TableSkeleton } from "@/components/ui/Skeleton";
@@ -50,6 +51,7 @@ interface PendingInvite {
   role: string;
   teamRole: string;
   teamId: string | null;
+  token: string;
   createdAt: string;
   expiresAt: string | null;
 }
@@ -91,6 +93,11 @@ export default function OrganizationDetailPage() {
   const [searchResults, setSearchResults] = useState<SearchUser[]>([]);
   const [searching, setSearching] = useState(false);
   const searchTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [inviteResult, setInviteResult] = useState<{
+    email: string;
+    token: string;
+    message: string;
+  } | null>(null);
 
   const [newTeamName, setNewTeamName] = useState("");
   const [teamLoading, setTeamLoading] = useState(false);
@@ -131,7 +138,8 @@ export default function OrganizationDetailPage() {
 
   async function handleInvite(e: React.FormEvent) {
     e.preventDefault();
-    if (!inviteEmail.trim()) {
+    const invitedEmail = inviteEmail.trim();
+    if (!invitedEmail) {
       toast.error("Enter an email address");
       return;
     }
@@ -141,7 +149,7 @@ export default function OrganizationDetailPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: inviteEmail.trim(),
+          email: invitedEmail,
           role: inviteRole,
           teamId: inviteTeamId || null,
           teamRole: inviteTeamRole,
@@ -158,13 +166,46 @@ export default function OrganizationDetailPage() {
       setInviteTeamRole("MEMBER");
       setInviteTeamId("");
       setSearchResults([]);
-      setInviteOpen(false);
       loadData();
+      if (data.token) {
+        // Unknown email: show the shareable invite link instead of closing.
+        setInviteResult({
+          email: invitedEmail,
+          token: data.token,
+          message: data.message || "",
+        });
+      } else {
+        setInviteOpen(false);
+      }
     } catch {
       toast.error("Something went wrong");
     } finally {
       setInviteLoading(false);
     }
+  }
+
+  function buildInviteLink(token: string) {
+    if (typeof window === "undefined") return `/invite?token=${token}`;
+    return `${window.location.origin}/invite?token=${token}`;
+  }
+
+  async function copyInviteLink(token: string) {
+    try {
+      await navigator.clipboard.writeText(buildInviteLink(token));
+      toast.success("Invite link copied");
+    } catch {
+      toast.error("Could not copy the link");
+    }
+  }
+
+  function openInvite() {
+    setInviteResult(null);
+    setInviteOpen(true);
+  }
+
+  function closeInvite() {
+    setInviteResult(null);
+    setInviteOpen(false);
   }
 
   async function handleCreateTeam(e: React.FormEvent) {
@@ -378,7 +419,7 @@ export default function OrganizationDetailPage() {
         <div className="flex items-center gap-2">
           {isAdmin && (
             <button
-              onClick={() => setInviteOpen(true)}
+              onClick={openInvite}
               className="flex items-center gap-1.5 bg-primary text-primary-foreground px-3 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               <UserPlus className="h-4 w-4" /> Invite Member
@@ -543,7 +584,7 @@ export default function OrganizationDetailPage() {
 
         {isAdmin && (
           <button
-            onClick={() => setInviteOpen(true)}
+            onClick={openInvite}
             className="mt-4 flex items-center gap-1.5 text-sm text-primary hover:underline"
           >
             <UserPlus className="h-4 w-4" /> Add a member to a team
@@ -634,9 +675,19 @@ export default function OrganizationDetailPage() {
                     </p>
                   </div>
                 </div>
-                <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium">
-                  Pending
-                </span>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium">
+                    Pending
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => copyInviteLink(inv.token)}
+                    title="Copy invite link"
+                    className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  >
+                    <Link2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -647,18 +698,65 @@ export default function OrganizationDetailPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
             className="absolute inset-0 bg-black/50"
-            onClick={() => setInviteOpen(false)}
+            onClick={closeInvite}
           />
           <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
             <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 className="text-lg font-semibold">Invite Member</h2>
               <button
-                onClick={() => setInviteOpen(false)}
+                onClick={closeInvite}
                 className="p-1 hover:bg-muted rounded-lg"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
+            {inviteResult ? (
+              <div className="p-4 space-y-4">
+                <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                  <Check className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm text-emerald-800 min-w-0">
+                    <p className="font-medium break-all">
+                      Invite created for {inviteResult.email}
+                    </p>
+                    <p className="mt-0.5 text-emerald-700 break-words">
+                      {inviteResult.message}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">
+                    Invite link — share it with {inviteResult.email}
+                  </label>
+                  <input
+                    readOnly
+                    value={buildInviteLink(inviteResult.token)}
+                    onFocus={(e) => e.target.select()}
+                    className="w-full border border-input rounded-lg px-3 py-2 text-sm bg-muted/50 outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Works for 7 days. Send it via WhatsApp, Slack, email —
+                    whatever you use.
+                  </p>
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => copyInviteLink(inviteResult.token)}
+                    className="flex-1 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-1"
+                  >
+                    <Link2 className="h-4 w-4" />
+                    Copy link
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeInvite}
+                    className="px-4 py-2 rounded-lg text-sm font-medium border border-border hover:bg-muted transition-colors"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            ) : (
             <form onSubmit={handleInvite} className="p-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1.5">Email</label>
@@ -752,9 +850,11 @@ export default function OrganizationDetailPage() {
                 </button>
               </div>
               <p className="text-xs text-muted-foreground text-center">
-                Existing Xora users are added instantly; others get an email invite.
+                Existing Xora users are added instantly; others get a shareable
+                invite link.
               </p>
             </form>
+            )}
           </div>
         </div>
       )}

@@ -164,6 +164,7 @@ export async function POST(
 
   return NextResponse.json(
     {
+      token,
       message: ok
         ? `We emailed an invite to ${email}.`
         : `Invite created for ${email}, but the email could not be sent.`,
