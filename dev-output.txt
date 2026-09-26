@@ -2,7 +2,8 @@
 - Local:         http://localhost:3000
 - Network:       http://10.151.234.246:3000
 - Environments: .env
-✓ Ready in 2.1s
-✓ Running next.config.ts took 141ms
+✓ Ready in 799ms
+✓ Running next.config.ts took 67ms
 
- GET /api/notifications/unread-count 401 in 1088ms (next.js: 980ms, application-code: 108ms)
+ GET /api/notifications/unread-count 401 in 329ms (next.js: 271ms, application-code: 59ms)
+ POST /api/feedback 401 in 241ms (next.js: 227ms, application-code: 14ms)
