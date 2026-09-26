@@ -7,3 +7,84 @@
 
  GET /api/notifications/unread-count 401 in 329ms (next.js: 271ms, application-code: 59ms)
  POST /api/feedback 401 in 241ms (next.js: 227ms, application-code: 14ms)
+ GET / 200 in 3.2s (next.js: 1626ms, proxy.ts: 206ms, application-code: 1365ms)
+ GET /login 200 in 1417ms (next.js: 90ms, proxy.ts: 37ms, application-code: 1290ms)
+ GET / 200 in 1034ms (next.js: 106ms, proxy.ts: 78ms, application-code: 850ms)
+ GET /login 200 in 298ms (next.js: 21ms, proxy.ts: 27ms, application-code: 250ms)
+ GET /login 200 in 1868ms (next.js: 560ms, proxy.ts: 51ms, application-code: 1257ms)
+ GET /register 200 in 1889ms (next.js: 964ms, proxy.ts: 48ms, application-code: 877ms)
+ GET / 200 in 1917ms (next.js: 44ms, proxy.ts: 53ms, application-code: 1820ms)
+ GET /login 200 in 555ms (next.js: 178ms, proxy.ts: 115ms, application-code: 262ms)
+ GET /login 200 in 266ms (next.js: 19ms, proxy.ts: 18ms, application-code: 229ms)
+ GET /login 200 in 235ms (next.js: 21ms, proxy.ts: 27ms, application-code: 187ms)
+ GET /login 200 in 167ms (next.js: 16ms, proxy.ts: 17ms, application-code: 133ms)
+ GET /login 200 in 225ms (next.js: 10ms, proxy.ts: 14ms, application-code: 200ms)
+ GET /login 200 in 195ms (next.js: 8ms, proxy.ts: 55ms, application-code: 132ms)
+ GET /api/auth/session 200 in 2.4s (next.js: 2.3s, application-code: 42ms)
+ GET /api/auth/session 200 in 88ms (next.js: 42ms, application-code: 46ms)
+ GET /login 200 in 1171ms (next.js: 36ms, proxy.ts: 34ms, application-code: 1101ms)
+ GET /register 200 in 1173ms (next.js: 46ms, proxy.ts: 37ms, application-code: 1090ms)
+ GET / 200 in 1186ms (next.js: 25ms, proxy.ts: 35ms, application-code: 1127ms)
+ GET /login 200 in 271ms (next.js: 16ms, proxy.ts: 16ms, application-code: 240ms)
+ GET /login 200 in 291ms (next.js: 21ms, proxy.ts: 24ms, application-code: 246ms)
+ GET /login 200 in 217ms (next.js: 20ms, proxy.ts: 18ms, application-code: 179ms)
+ GET /login 200 in 237ms (next.js: 12ms, proxy.ts: 16ms, application-code: 209ms)
+ GET /login 200 in 179ms (next.js: 15ms, proxy.ts: 24ms, application-code: 140ms)
+ GET /login 200 in 86ms (next.js: 6ms, proxy.ts: 13ms, application-code: 66ms)
+ GET /login 200 in 152ms (next.js: 11ms, proxy.ts: 9ms, application-code: 132ms)
+ GET /api/auth/providers 200 in 30ms (next.js: 17ms, application-code: 14ms)
+ GET /api/auth/csrf 200 in 12ms (next.js: 4ms, application-code: 8ms)
+ POST /api/auth/callback/credentials? 200 in 5.0s (next.js: 3ms, application-code: 5.0s)
+ GET /api/auth/session 200 in 42ms (next.js: 13ms, application-code: 28ms)
+ GET /dashboard 200 in 1116ms (next.js: 762ms, proxy.ts: 44ms, application-code: 309ms)
+ GET /dashboard 200 in 174ms (next.js: 9ms, proxy.ts: 27ms, application-code: 137ms)
+ GET /dashboard 200 in 508ms (next.js: 20ms, proxy.ts: 33ms, application-code: 455ms)
+ GET /login 200 in 255ms (next.js: 22ms, proxy.ts: 72ms, application-code: 161ms)
+ GET /login 200 in 337ms (next.js: 11ms, proxy.ts: 24ms, application-code: 302ms)
+ GET /api/auth/session 200 in 109ms (next.js: 37ms, application-code: 72ms)
+ GET /api/auth/session 200 in 22ms (next.js: 4ms, application-code: 17ms)
+ GET /api/metrics 200 in 2.2s (next.js: 600ms, application-code: 1587ms)
+List projects error: {
+  code: '42P13',
+  details: 'Final statement returns text instead of bigint at column 11.',
+  hint: null,
+  message: 'return type mismatch in function declared to return record'
+}
+ GET /api/projects 500 in 2.2s (next.js: 762ms, application-code: 1475ms)
+ GET /api/organizations 200 in 2.6s (next.js: 848ms, application-code: 1732ms)
+ GET /api/metrics 200 in 437ms (next.js: 5ms, application-code: 432ms)
+List projects error: {
+  code: '42P13',
+  details: 'Final statement returns text instead of bigint at column 11.',
+  hint: null,
+  message: 'return type mismatch in function declared to return record'
+}
+ GET /api/projects 500 in 1262ms (next.js: 4ms, application-code: 1258ms)
+ GET /api/user/plan 200 in 3.6s (next.js: 689ms, application-code: 2.9s)
+ GET /api/user/plan 200 in 399ms (next.js: 4ms, application-code: 395ms)
+ GET /api/organizations 200 in 4.6s (next.js: 7ms, application-code: 4.6s)
+ GET /api/notifications/unread-count 200 in 13.3s (next.js: 18ms, application-code: 13.3s)
+ GET /api/notifications/unread-count 200 in 4.3s (next.js: 14ms, application-code: 4.3s)
+ GET /api/notifications/unread-count 200 in 1245ms (next.js: 4ms, application-code: 1241ms)
+ GET /api/notifications/unread-count 200 in 1296ms (next.js: 4ms, application-code: 1291ms)
+ GET /api/notifications/unread-count 200 in 3.1s (next.js: 6ms, application-code: 3.1s)
+Create feedback error: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.Feedback' in the schema cache"
+}
+ POST /api/feedback 500 in 1313ms (next.js: 9ms, application-code: 1305ms)
+ GET /api/notifications/unread-count 200 in 2.3s (next.js: 8ms, application-code: 2.3s)
+ GET /api/auth/session 200 in 86ms (next.js: 21ms, application-code: 66ms)
+ GET /api/auth/session 200 in 26ms (next.js: 6ms, application-code: 19ms)
+ GET /login 200 in 244ms (next.js: 21ms, proxy.ts: 60ms, application-code: 163ms)
+Get user feedback error: {
+  code: 'PGRST205',
+  details: null,
+  hint: null,
+  message: "Could not find the table 'public.Feedback' in the schema cache"
+}
+ GET /api/feedback 500 in 1717ms (next.js: 6ms, application-code: 1710ms)
+ GET /api/notifications/unread-count 200 in 397ms (next.js: 8ms, application-code: 389ms)
+ GET /api/notifications/unread-count 200 in 78s (next.js: 7ms, application-code: 78s)

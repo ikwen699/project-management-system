@@ -9,7 +9,8 @@ RETURNS TABLE (
   "createdAt" TIMESTAMPTZ, "updatedAt" TIMESTAMPTZ,
   "taskCount" BIGINT, "completedTasks" BIGINT
 ) AS $$
-  SELECT p.*, 
+  SELECT p.id, p.name, p.description, p.status, p."isArchived",
+    p."startDate", p."endDate", p."ownerId", p."createdAt", p."updatedAt",
     (SELECT COUNT(*) FROM "Task" WHERE "projectId" = p.id) as "taskCount",
     (SELECT COUNT(*) FROM "Task" WHERE "projectId" = p.id AND "columnId" IN (SELECT id FROM "Column" WHERE "projectId" = p.id AND name = 'Done')) as "completedTasks"
   FROM "Project" p
@@ -26,7 +27,8 @@ RETURNS TABLE (
   "createdAt" TIMESTAMPTZ, "updatedAt" TIMESTAMPTZ,
   "taskCount" BIGINT
 ) AS $$
-  SELECT p.*,
+  SELECT p.id, p.name, p.description, p.status, p."isArchived",
+    p."startDate", p."endDate", p."ownerId", p."createdAt", p."updatedAt",
     (SELECT COUNT(*) FROM "Task" WHERE "projectId" = p.id) as "taskCount"
   FROM "Project" p
   INNER JOIN "ProjectMember" pm ON pm."projectId" = p.id

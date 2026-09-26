@@ -1,7 +1,14 @@
 -- 018: Create Feedback table
 
-CREATE TYPE feedback_category AS ENUM ('BUG', 'SUGGESTION', 'OTHER');
-CREATE TYPE feedback_status AS ENUM ('NEW', 'READ', 'RESOLVED');
+DO $$ BEGIN
+  CREATE TYPE feedback_category AS ENUM ('BUG', 'SUGGESTION', 'OTHER');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE feedback_status AS ENUM ('NEW', 'READ', 'RESOLVED');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 CREATE TABLE IF NOT EXISTS "Feedback" (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
@@ -15,6 +22,6 @@ CREATE TABLE IF NOT EXISTS "Feedback" (
   "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_feedback_status ON "Feedback"("status");
-CREATE INDEX idx_feedback_user ON "Feedback"("userId");
-CREATE INDEX idx_feedback_created ON "Feedback"("createdAt" DESC);
+CREATE INDEX IF NOT EXISTS idx_feedback_status ON "Feedback"("status");
+CREATE INDEX IF NOT EXISTS idx_feedback_user ON "Feedback"("userId");
+CREATE INDEX IF NOT EXISTS idx_feedback_created ON "Feedback"("createdAt" DESC);
