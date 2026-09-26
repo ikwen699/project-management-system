@@ -187,6 +187,21 @@ export interface NotificationPreference {
   updatedAt: Date;
 }
 
+export type FeedbackCategory = "BUG" | "SUGGESTION" | "OTHER";
+export type FeedbackStatus = "NEW" | "READ" | "RESOLVED";
+
+export interface Feedback {
+  id: string;
+  category: FeedbackCategory;
+  subject: string;
+  message: string;
+  page: string | null;
+  status: FeedbackStatus;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface ActivityLog {
   id: string;
   userId: string;

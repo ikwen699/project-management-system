@@ -13,6 +13,9 @@ import {
   Plus,
   Trash2,
   X,
+  MessageSquare,
+  Check,
+  RefreshCw,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -36,6 +39,24 @@ interface AdminUser {
   createdAt: string;
 }
 
+interface AdminFeedback {
+  id: string;
+  category: "BUG" | "SUGGESTION" | "OTHER";
+  subject: string;
+  message: string;
+  page: string | null;
+  status: "NEW" | "READ" | "RESOLVED";
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  User: {
+    id: string;
+    name: string;
+    email: string;
+    avatar: string | null;
+  };
+}
+
 const statusColors: Record<string, string> = {
   PLANNING: "bg-purple-100 text-purple-700",
   ACTIVE: "bg-blue-100 text-blue-700",
@@ -44,14 +65,29 @@ const statusColors: Record<string, string> = {
   CANCELLED: "bg-gray-100 text-gray-700",
 };
 
+const feedbackStatusColors: Record<string, string> = {
+  NEW: "bg-blue-100 text-blue-700",
+  READ: "bg-amber-100 text-amber-700",
+  RESOLVED: "bg-green-100 text-green-700",
+};
+
+const feedbackCategoryColors: Record<string, string> = {
+  BUG: "bg-red-100 text-red-700",
+  SUGGESTION: "bg-purple-100 text-purple-700",
+  OTHER: "bg-gray-100 text-gray-700",
+};
+
 export default function AdminPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"projects" | "users">("projects");
+  const [activeTab, setActiveTab] = useState<"projects" | "users" | "feedback">("projects");
   const [projects, setProjects] = useState<AdminProject[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [feedback, setFeedback] = useState<AdminFeedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingUser, setUpdatingUser] = useState<string | null>(null);
+  const [updatingFeedback, setUpdatingFeedback] = useState<string | null>(null);
+  const [feedbackStatusFilter, setFeedbackStatusFilter] = useState<"ALL" | "NEW" | "READ" | "RESOLVED">("ALL");
 
   const [showAddUser, setShowAddUser] = useState(false);
   const [newName, setNewName] = useState("");
@@ -63,12 +99,20 @@ export default function AdminPage() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [projRes, userRes] = await Promise.all([
+      const [projRes, userRes, feedbackRes] = await Promise.all([
         fetch("/api/admin/projects"),
         fetch("/api/admin/users"),
+        fetch("/api/admin/feedback"),
       ]);
 
-      if (projRes.status === 401 || projRes.status === 403 || userRes.status === 401 || userRes.status === 403) {
+      if (
+        projRes.status === 401 ||
+        projRes.status === 403 ||
+        userRes.status === 401 ||
+        userRes.status === 403 ||
+        feedbackRes.status === 401 ||
+        feedbackRes.status === 403
+      ) {
         toast.error("Access denied — super admin only");
         router.push("/dashboard");
         return;
@@ -76,6 +120,7 @@ export default function AdminPage() {
 
       if (projRes.ok) setProjects(await projRes.json());
       if (userRes.ok) setUsers(await userRes.json());
+      if (feedbackRes.ok) setFeedback(await feedbackRes.json());
     } catch {
       toast.error("Failed to load admin data");
     } finally {
@@ -171,6 +216,52 @@ export default function AdminPage() {
     }
   }
 
+  async function handleFeedbackStatusChange(feedbackId: string, newStatus: "NEW" | "READ" | "RESOLVED") {
+    setUpdatingFeedback(feedbackId);
+    try {
+      const res = await fetch("/api/admin/feedback", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: feedbackId, status: newStatus }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        toast.error(data.error || "Failed to update feedback");
+        return;
+      }
+      toast.success(`Feedback marked as ${newStatus}`);
+      setFeedback((prev) =>
+        prev.map((f) => (f.id === feedbackId ? { ...f, status: newStatus } : f))
+      );
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setUpdatingFeedback(null);
+    }
+  }
+
+  async function handleDeleteFeedback(feedbackId: string, subject: string) {
+    if (!confirm(`Delete feedback "${subject}"? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`/api/admin/feedback?id=${feedbackId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        toast.error(data.error || "Failed to delete feedback");
+        return;
+      }
+      toast.success("Feedback deleted");
+      setFeedback((prev) => prev.filter((f) => f.id !== feedbackId));
+    } catch {
+      toast.error("Something went wrong");
+    }
+  }
+
+  const filteredFeedback = feedback.filter((f) =>
+    feedbackStatusFilter === "ALL" ? true : f.status === feedbackStatusFilter
+  );
+
   if (status === "loading" || loading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -179,7 +270,7 @@ export default function AdminPage() {
     );
   }
 
-  if (projects.length === 0 && users.length === 0) {
+  if (projects.length === 0 && users.length === 0 && feedback.length === 0) {
     return null;
   }
 
@@ -197,7 +288,7 @@ export default function AdminPage() {
           <h1 className="text-2xl font-bold">Admin Panel</h1>
         </div>
         <p className="text-sm text-muted-foreground mt-1">
-          Manage all projects and users across the system.
+          Manage all projects, users, and feedback across the system.
         </p>
       </div>
 
@@ -205,6 +296,7 @@ export default function AdminPage() {
         {([
           { key: "projects" as const, label: "All Projects", icon: FolderKanban, count: projects.length },
           { key: "users" as const, label: "All Users", icon: Users, count: users.length },
+          { key: "feedback" as const, label: "Feedback", icon: MessageSquare, count: feedback.length },
         ]).map((tab) => (
           <button
             key={tab.key}
@@ -366,6 +458,132 @@ export default function AdminPage() {
                               disabled={user.id === (session?.user as any)?.id}
                               className="p-1.5 hover:bg-destructive/10 text-destructive rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                               title="Delete user"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === "feedback" && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="flex gap-2">
+              {(["ALL", "NEW", "READ", "RESOLVED"] as const).map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setFeedbackStatusFilter(status)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    feedbackStatusFilter === status
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
+            <div className="flex-1" />
+            <span className="text-sm text-muted-foreground">
+              {filteredFeedback.length} of {feedback.length} feedback
+            </span>
+          </div>
+
+          <div className="bg-white rounded-xl border border-border overflow-hidden">
+            {filteredFeedback.length === 0 ? (
+              <div className="p-8 text-center text-muted-foreground">
+                <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p>No feedback found</p>
+                {feedback.length > 0 && (
+                  <p className="text-sm mt-1">Try changing the filter</p>
+                )}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/50">
+                      <th className="text-left p-3 font-medium text-muted-foreground">Category</th>
+                      <th className="text-left p-3 font-medium text-muted-foreground">Subject / Message</th>
+                      <th className="text-left p-3 font-medium text-muted-foreground">User</th>
+                      <th className="text-left p-3 font-medium text-muted-foreground">Page</th>
+                      <th className="text-left p-3 font-medium text-muted-foreground">Status</th>
+                      <th className="text-left p-3 font-medium text-muted-foreground">Date</th>
+                      <th className="p-3 w-40">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredFeedback.map((item) => (
+                      <tr
+                        key={item.id}
+                        className="border-b border-border last:border-0 hover:bg-muted/20"
+                      >
+                        <td className="p-3">
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${feedbackCategoryColors[item.category] || ""}`}>
+                            {item.category}
+                          </span>
+                        </td>
+                        <td className="p-3 max-w-md">
+                          <p className="font-medium truncate">{item.subject}</p>
+                          <p className="text-xs text-muted-foreground truncate max-w-md mt-0.5 line-clamp-2">
+                            {item.message}
+                          </p>
+                        </td>
+                        <td className="p-3">
+                          <div>
+                            <p>{item.User?.name || "Unknown"}</p>
+                            <p className="text-xs text-muted-foreground">{item.User?.email || ""}</p>
+                          </div>
+                        </td>
+                        <td className="p-3 text-muted-foreground">
+                          {item.page ? (
+                            <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{item.page}</code>
+                          ) : (
+                            <span className="text-xs">—</span>
+                          )}
+                        </td>
+                        <td className="p-3">
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${feedbackStatusColors[item.status] || ""}`}>
+                            {item.status}
+                          </span>
+                        </td>
+                        <td className="p-3 text-muted-foreground">
+                          {new Date(item.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="p-3">
+                          <div className="flex items-center gap-1.5">
+                            {item.status !== "READ" && (
+                              <button
+                                onClick={() => handleFeedbackStatusChange(item.id, "READ")}
+                                disabled={updatingFeedback === item.id}
+                                className="p-1.5 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors disabled:opacity-30"
+                                title="Mark as Read"
+                              >
+                                <Check className="h-4 w-4" />
+                              </button>
+                            )}
+                            {item.status !== "RESOLVED" && (
+                              <button
+                                onClick={() => handleFeedbackStatusChange(item.id, "RESOLVED")}
+                                disabled={updatingFeedback === item.id}
+                                className="p-1.5 hover:bg-green-100 text-green-600 rounded-lg transition-colors disabled:opacity-30"
+                                title="Mark as Resolved"
+                              >
+                                <RefreshCw className="h-4 w-4" />
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteFeedback(item.id, item.subject)}
+                              className="p-1.5 hover:bg-destructive/10 text-destructive rounded-lg transition-colors"
+                              title="Delete"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>

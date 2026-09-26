@@ -1,11 +1,15 @@
 "use client";
 
-import { Bell, Menu, Search } from "lucide-react";
+import { Bell, Menu, Search, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 
-export function Header() {
+interface HeaderProps {
+  onOpenFeedback: () => void;
+}
+
+export function Header({ onOpenFeedback }: HeaderProps) {
   const { data: session } = useSession();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -82,6 +86,16 @@ export function Header() {
               </div>
               <Link href="/settings" className="block px-3 py-2 text-sm hover:bg-muted transition-colors" onClick={() => setShowUserMenu(false)}>Profile Settings</Link>
               <Link href="/settings/notifications" className="block px-3 py-2 text-sm hover:bg-muted transition-colors" onClick={() => setShowUserMenu(false)}>Notification Preferences</Link>
+              <button
+                onClick={() => {
+                  onOpenFeedback();
+                  setShowUserMenu(false);
+                }}
+                className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors flex items-center gap-2"
+              >
+                <MessageSquare className="h-4 w-4" />
+                Send Feedback
+              </button>
               <hr className="my-1 border-border" />
               <button onClick={() => signOut({ callbackUrl: "/login" })} className="w-full text-left px-3 py-2 text-sm text-destructive hover:bg-muted transition-colors">Log out</button>
             </div>

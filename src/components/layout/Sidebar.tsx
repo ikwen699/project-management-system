@@ -14,6 +14,7 @@ import {
   Building2,
   ChevronLeft,
   ChevronRight,
+  MessageSquare,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -29,7 +30,11 @@ const navItems = [
 
 const adminItem = { href: "/admin", label: "Admin", icon: Shield };
 
-export function Sidebar() {
+interface SidebarProps {
+  onOpenFeedback: () => void;
+}
+
+export function Sidebar({ onOpenFeedback }: SidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [collapsed, setCollapsed] = useState(false);
@@ -87,6 +92,15 @@ export function Sidebar() {
             </Link>
           );
         })}
+
+        <button
+          onClick={onOpenFeedback}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-sidebar-fg/70 hover:bg-sidebar-accent hover:text-white ${collapsed ? "justify-center" : ""}`}
+          aria-label="Send Feedback"
+        >
+          <MessageSquare className="h-5 w-5 shrink-0" />
+          {!collapsed && <span>Feedback</span>}
+        </button>
       </nav>
     </aside>
   );
