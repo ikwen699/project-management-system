@@ -37,6 +37,7 @@ interface AdminUser {
   avatar: string | null;
   role: string;
   createdAt: string;
+  removalScheduledAt: string | null;
 }
 
 interface AdminFeedback {
@@ -95,6 +96,13 @@ export default function AdminPage() {
   const [newPassword, setNewPassword] = useState("");
   const [newRole, setNewRole] = useState("USER");
   const [creatingUser, setCreatingUser] = useState(false);
+
+  const [showRemoveUsers, setShowRemoveUsers] = useState(false);
+  const [removalUserIds, setRemovalUserIds] = useState<string[]>([]);
+  const [removalMode, setRemovalMode] = useState<"instant" | "scheduled">("instant");
+  const [removalDays, setRemovalDays] = useState<number>(7);
+  const [removalCustomDate, setRemovalCustomDate] = useState("");
+  const [removalSubmitting, setRemovalSubmitting] = useState(false);
 
   const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
@@ -173,8 +181,115 @@ export default function AdminPage() {
     }
   }
 
-  async function handleDeleteUser(userId: string, userName: string) {
-    if (!confirm(`Delete user "${userName}"? This cannot be undone.`)) return;
+  function openRemoveModal(userIds: string[]) {
+    setRemovalUserIds(userIds);
+    setRemovalMode("instant");
+    setRemovalDays(7);
+    setRemovalCustomDate("");
+    setShowRemoveUsers(true);
+  }
+
+  function handleDeleteUser(userId: string, userName: string) {
+    openRemoveModal([userId]);
+  }
+
+  async function handleBulkDeleteUsers() {
+    const count = selectedUserIds.size;
+    if (count === 0) return;
+    openRemoveModal(Array.from(selectedUserIds));
+  }
+
+  async function handleRemoveUsersSubmit() {
+    setRemovalSubmitting(true);
+    try {
+      if (removalMode === "instant") {
+        const res = await fetch("/api/admin/users", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userIds: removalUserIds }),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          toast.error(data.error || "Failed to remove users");
+          return;
+        }
+        const data = await res.json();
+        const deletedCount = data.deleted || 0;
+        if (deletedCount > 0) {
+          toast.success(`${deletedCount} user${deletedCount > 1 ? "s" : ""} removed`);
+          setUsers((prev) => prev.filter((u) => !removalUserIds.includes(u.id)));
+        }
+        if (data.skipped && data.skipped.length > 0) {
+          data.skipped.forEach((s: { userId: string; reason: string }) => {
+            toast.error(s.reason);
+          });
+        }
+      } else {
+        let scheduledFor: string;
+        if (removalCustomDate) {
+          scheduledFor = new Date(removalCustomDate).toISOString();
+        } else {
+          const date = new Date();
+          date.setDate(date.getDate() + removalDays);
+          scheduledFor = date.toISOString();
+        }
+        const res = await fetch("/api/admin/users/removal", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userIds: removalUserIds, scheduledFor }),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          toast.error(data.error || "Failed to schedule removal");
+          return;
+        }
+        const data = await res.json();
+        const scheduledCount = data.scheduled || 0;
+        if (scheduledCount > 0) {
+          toast.success(`${scheduledCount} user${scheduledCount > 1 ? "s" : ""} scheduled for removal`);
+          setUsers((prev) =>
+            prev.map((u) =>
+              removalUserIds.includes(u.id) ? { ...u, removalScheduledAt: scheduledFor } : u
+            )
+          );
+        }
+        if (data.skipped && data.skipped.length > 0) {
+          data.skipped.forEach((s: { userId: string; reason: string }) => {
+            toast.error(s.reason);
+          });
+        }
+      }
+      setShowRemoveUsers(false);
+      setSelectedUserIds(new Set());
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setRemovalSubmitting(false);
+    }
+  }
+
+  async function handleCancelScheduledRemoval(userId: string) {
+    try {
+      const res = await fetch("/api/admin/users/removal", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userIds: [userId] }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        toast.error(data.error || "Failed to cancel scheduled removal");
+        return;
+      }
+      toast.success("Scheduled removal cancelled");
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, removalScheduledAt: null } : u))
+      );
+    } catch {
+      toast.error("Something went wrong");
+    }
+  }
+
+  async function handlePurgeNow(userId: string) {
     try {
       const res = await fetch("/api/admin/users", {
         method: "DELETE",
@@ -183,50 +298,13 @@ export default function AdminPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        toast.error(data.error || "Failed to delete user");
+        toast.error(data.error || "Failed to purge user");
         return;
       }
-      toast.success("User deleted");
+      toast.success("User purged");
       setUsers((prev) => prev.filter((u) => u.id !== userId));
     } catch {
       toast.error("Something went wrong");
-    }
-  }
-
-  async function handleBulkDeleteUsers() {
-    const count = selectedUserIds.size;
-    if (count === 0) return;
-
-    if (!confirm(`Delete ${count} selected user${count > 1 ? "s" : ""}? This cannot be undone.`)) return;
-
-    setBulkDeleting(true);
-    try {
-      const res = await fetch("/api/admin/users", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userIds: Array.from(selectedUserIds) }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        toast.error(data.error || "Failed to delete users");
-        return;
-      }
-      const data = await res.json();
-      const deletedCount = data.deleted || 0;
-      if (deletedCount > 0) {
-        toast.success(`${deletedCount} user${deletedCount > 1 ? "s" : ""} deleted`);
-        setUsers((prev) => prev.filter((u) => !selectedUserIds.has(u.id)));
-      }
-      if (data.skipped && data.skipped.length > 0) {
-        data.skipped.forEach((s: { userId: string; reason: string }) => {
-          toast.error(s.reason);
-        });
-      }
-      setSelectedUserIds(new Set());
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setBulkDeleting(false);
     }
   }
 
@@ -559,25 +637,49 @@ export default function AdminPage() {
                             {new Date(user.createdAt).toLocaleDateString()}
                           </td>
                           <td className="p-3">
-                            <div className="flex items-center gap-2">
-                              <select
-                                value={user.role}
-                                onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                                disabled={updatingUser === user.id || user.id === (session?.user as any)?.id}
-                                className="border border-border rounded-lg px-2 py-1 text-sm outline-none disabled:opacity-50"
-                              >
-                                <option value="USER">User</option>
-                                <option value="SUPER_ADMIN">Super Admin</option>
-                              </select>
-                              <button
-                                onClick={() => handleDeleteUser(user.id, user.name)}
-                                disabled={user.id === (session?.user as any)?.id}
-                                className="p-1.5 hover:bg-destructive/10 text-destructive rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                                title="Delete user"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
+                            {user.removalScheduledAt ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-700">
+                                  Removes {new Date(user.removalScheduledAt).toLocaleDateString()}
+                                </span>
+                                <button
+                                  onClick={() => handleCancelScheduledRemoval(user.id)}
+                                  disabled={user.id === (session?.user as any)?.id}
+                                  className="p-1.5 hover:bg-green-100 text-green-700 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  title="Cancel scheduled removal"
+                                >
+                                  <RefreshCw className="h-4 w-4" />
+                                </button>
+                                <button
+                                  onClick={() => handlePurgeNow(user.id)}
+                                  disabled={user.id === (session?.user as any)?.id}
+                                  className="p-1.5 hover:bg-destructive/10 text-destructive rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  title="Purge now"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <select
+                                  value={user.role}
+                                  onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                                  disabled={updatingUser === user.id || user.id === (session?.user as any)?.id}
+                                  className="border border-border rounded-lg px-2 py-1 text-sm outline-none disabled:opacity-50"
+                                >
+                                  <option value="USER">User</option>
+                                  <option value="SUPER_ADMIN">Super Admin</option>
+                                </select>
+                                <button
+                                  onClick={() => handleDeleteUser(user.id, user.name)}
+                                  disabled={user.id === (session?.user as any)?.id}
+                                  className="p-1.5 hover:bg-destructive/10 text-destructive rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  title="Remove user"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            )}
                           </td>
                         </tr>
                       );
@@ -712,6 +814,134 @@ export default function AdminPage() {
                 </table>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {showRemoveUsers && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowRemoveUsers(false)}
+          />
+          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <h2 className="text-lg font-semibold">
+                {removalMode === "instant" ? "Remove Users" : "Schedule User Removal"}
+              </h2>
+              <button
+                onClick={() => setShowRemoveUsers(false)}
+                className="p-1 hover:bg-muted rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              <div className="text-sm text-muted-foreground">
+                {removalUserIds.length === 1 ? (
+                  <>
+                    <p className="font-medium">1 user selected</p>
+                    <p>Are you sure you want to {removalMode === "instant" ? "remove" : "schedule removal for"} this user?</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-medium">{removalUserIds.length} users selected</p>
+                    <p>Are you sure you want to {removalMode === "instant" ? "remove" : "schedule removal for"} these users?</p>
+                  </>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setRemovalMode("instant")}
+                  className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                    removalMode === "instant"
+                      ? "bg-destructive text-destructive-foreground border-destructive"
+                      : "hover:bg-muted border-border"
+                  }`}
+                >
+                  Remove Now
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRemovalMode("scheduled")}
+                  className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                    removalMode === "scheduled"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "hover:bg-muted border-border"
+                  }`}
+                >
+                  Schedule
+                </button>
+              </div>
+
+              {removalMode === "scheduled" && (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">Select when to remove:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[1, 3, 7, 14, 30].map((days) => (
+                      <button
+                        key={days}
+                        type="button"
+                        onClick={() => {
+                          setRemovalDays(days);
+                          setRemovalCustomDate("");
+                        }}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
+                          removalDays === days && !removalCustomDate
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "hover:bg-muted border-border"
+                        }`}
+                      >
+                        {days} day{days > 1 ? "s" : ""}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="date"
+                      value={removalCustomDate}
+                      onChange={(e) => {
+                        setRemovalCustomDate(e.target.value);
+                        setRemovalDays(7);
+                      }}
+                      min={new Date(Date.now() + 86400000).toISOString().split("T")[0]}
+                      className="flex-1 border border-input rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+                    />
+                    <span className="text-xs text-muted-foreground">Custom date</span>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={handleRemoveUsersSubmit}
+                  disabled={removalSubmitting}
+                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
+                    removalMode === "instant"
+                      ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      : "bg-primary text-primary-foreground hover:bg-primary/90"
+                  }`}
+                >
+                  {removalSubmitting
+                    ? removalMode === "instant"
+                      ? "Removing..."
+                      : "Scheduling..."
+                    : removalMode === "instant"
+                    ? "Remove Now"
+                    : "Schedule Removal"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowRemoveUsers(false)}
+                  className="border border-border px-4 py-2 rounded-lg text-sm font-medium hover:bg-muted transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -26,6 +26,7 @@ export interface User {
   role: SystemRole;
   createdAt: Date;
   updatedAt: Date;
+  removalScheduledAt: Date | null;
 }
 
 export interface Project {
@@ -168,7 +169,9 @@ export type NotificationType =
   | "PROJECT_MEMBER_ADDED"
   | "MILESTONE_COMPLETED"
   | "PROJECT_DEADLINE_APPROACHING"
-  | "ORG_INVITE";
+  | "ORG_INVITE"
+  | "USER_REMOVAL_SCHEDULED"
+  | "USER_REMOVAL_CANCELLED";
 
 export interface NotificationPreference {
   id: string;

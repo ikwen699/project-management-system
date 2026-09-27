@@ -40,6 +40,11 @@ export const {
             return null;
           }
 
+          if ((user as any).removalScheduledAt && new Date((user as any).removalScheduledAt) <= new Date()) {
+            console.error("Auth: account scheduled for removal has passed:", credentials.email);
+            return null;
+          }
+
           const isPasswordValid = await compare(
             credentials.password as string,
             (user as User).password
@@ -76,8 +81,29 @@ export const {
       if (!token.id && token.sub) {
         token.id = token.sub;
       }
-      // If role is missing from token (existing session), fetch from DB
-      if (!token.role && token.id) {
+      // Throttled re-validation: check user exists and not past-due every 5 minutes
+      const now = Date.now();
+      const lastCheck = (token.userCheckedAt as number) || 0;
+      if (token.id && now - lastCheck > 5 * 60 * 1000) {
+        try {
+          const { data } = await supabase
+            .from("User")
+            .select("role, removalScheduledAt")
+            .eq("id", token.id as string)
+            .single();
+          if (!data) {
+            return null;
+          }
+          if (data.removalScheduledAt && new Date(data.removalScheduledAt) <= new Date()) {
+            return null;
+          }
+          token.role = data.role || "USER";
+          token.userCheckedAt = now;
+        } catch {
+          token.role = "USER";
+        }
+      } else if (!token.role && token.id) {
+        // If role is missing from token (existing session), fetch from DB
         try {
           const { data } = await supabase
             .from("User")

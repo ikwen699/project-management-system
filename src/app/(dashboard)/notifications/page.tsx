@@ -25,6 +25,8 @@ const typeIcons: Record<string, string> = {
   MILESTONE_COMPLETED: "🏁",
   PROJECT_DEADLINE_APPROACHING: "📅",
   ORG_INVITE: "📨",
+  USER_REMOVAL_SCHEDULED: "🗑️",
+  USER_REMOVAL_CANCELLED: "↩️",
 };
 
 function inviteTokenFrom(link: string | null): string | null {

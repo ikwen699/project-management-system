@@ -9,7 +9,9 @@ type NotificationType =
   | "PROJECT_MEMBER_ADDED"
   | "MILESTONE_COMPLETED"
   | "PROJECT_DEADLINE_APPROACHING"
-  | "ORG_INVITE";
+  | "ORG_INVITE"
+  | "USER_REMOVAL_SCHEDULED"
+  | "USER_REMOVAL_CANCELLED";
 
 interface CreateNotificationParams {
   type: NotificationType;
@@ -134,6 +136,33 @@ export async function notifyOrgInviteDeclined(
     title: "Invitation declined",
     message: `${declinedBy} declined your invitation to join "${organizationName}"`,
     userId: inviterId,
+    senderId,
+  });
+}
+
+export async function notifyRemovalScheduled(
+  userId: string,
+  scheduledDate: string,
+  senderId: string
+) {
+  await createNotification({
+    type: "USER_REMOVAL_SCHEDULED",
+    title: "Account removal scheduled",
+    message: `Your Xora account and all data will be permanently deleted on ${new Date(scheduledDate).toLocaleDateString()}. Contact an administrator if this is a mistake.`,
+    userId,
+    senderId,
+  });
+}
+
+export async function notifyRemovalCancelled(
+  userId: string,
+  senderId: string
+) {
+  await createNotification({
+    type: "USER_REMOVAL_CANCELLED",
+    title: "Account removal cancelled",
+    message: "Your scheduled account removal has been cancelled. Your account is active again.",
+    userId,
     senderId,
   });
 }

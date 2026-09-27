@@ -2,14 +2,17 @@ import { NextResponse } from "next/server";
 import { requireSuperAdmin } from "@/lib/admin";
 import { supabase } from "@/lib/supabase";
 import { hash } from "bcryptjs";
+import { purgeUsers, purgePastDueUsers } from "@/lib/admin-user-removal";
 
 export async function GET() {
   try {
     await requireSuperAdmin();
 
+    await purgePastDueUsers();
+
     const { data: users, error } = await supabase
       .from("User")
-      .select("id, name, email, avatar, role, createdAt")
+      .select("id, name, email, avatar, role, createdAt, removalScheduledAt")
       .order("createdAt", { ascending: false });
 
     if (error) throw error;
@@ -175,50 +178,13 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const { count: adminCount } = await supabase
-      .from("User")
-      .select("id", { count: "exact", head: true })
-      .eq("role", "SUPER_ADMIN");
-
-    const deleted: string[] = [];
-    const skipped: { userId: string; reason: string }[] = [];
-
-    for (const userId of userIds) {
-      if (session.user?.id && userId === session.user.id) {
-        skipped.push({ userId, reason: "Cannot delete your own account" });
-        continue;
-      }
-
-      const { data: targetUser } = await supabase
-        .from("User")
-        .select("role")
-        .eq("id", userId)
-        .single();
-
-      if (targetUser?.role === "SUPER_ADMIN" && adminCount !== null && adminCount <= 1) {
-        skipped.push({ userId, reason: "Cannot delete the last super admin" });
-        continue;
-      }
-
-      // Delete related records that don't cascade (no ON DELETE CASCADE)
-      await supabase.from("TimeEntry").delete().eq("userId", userId);
-      await supabase.from("FileAttachment").delete().eq("userId", userId);
-      await supabase.from("ActivityLog").delete().eq("userId", userId);
-
-      const { error } = await supabase.from("User").delete().eq("id", userId);
-      if (error) {
-        skipped.push({ userId, reason: error.message });
-        continue;
-      }
-
-      deleted.push(userId);
-    }
+    const result = await purgeUsers(userIds, session.user?.id || "");
 
     return NextResponse.json(
       {
-        deleted: deleted.length,
-        deletedIds: deleted,
-        skipped: skipped.length > 0 ? skipped : undefined,
+        deleted: result.deleted.length,
+        deletedIds: result.deleted,
+        skipped: result.skipped.length > 0 ? result.skipped : undefined,
       },
       { headers: corsHeaders() }
     );
