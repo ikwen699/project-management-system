@@ -153,18 +153,12 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const session = await requireSuperAdmin();
-    const { userId } = await request.json();
+    const body = await request.json();
+    const userIds: string[] = Array.isArray(body.userIds) ? body.userIds : body.userId ? [body.userId] : [];
 
-    if (!userId) {
+    if (userIds.length === 0) {
       return NextResponse.json(
-        { error: "userId is required" },
-        { status: 400 }
-      );
-    }
-
-    if (session.user?.id && userId === session.user.id) {
-      return NextResponse.json(
-        { error: "Cannot delete your own account" },
+        { error: "userId or userIds is required" },
         { status: 400 }
       );
     }
@@ -174,28 +168,45 @@ export async function DELETE(request: Request) {
       .select("id", { count: "exact", head: true })
       .eq("role", "SUPER_ADMIN");
 
-    const { data: targetUser } = await supabase
-      .from("User")
-      .select("role")
-      .eq("id", userId)
-      .single();
+    const deleted: string[] = [];
+    const skipped: { userId: string; reason: string }[] = [];
 
-    if (targetUser?.role === "SUPER_ADMIN" && adminCount !== null && adminCount <= 1) {
-      return NextResponse.json(
-        { error: "Cannot delete the last super admin" },
-        { status: 400 }
-      );
+    for (const userId of userIds) {
+      if (session.user?.id && userId === session.user.id) {
+        skipped.push({ userId, reason: "Cannot delete your own account" });
+        continue;
+      }
+
+      const { data: targetUser } = await supabase
+        .from("User")
+        .select("role")
+        .eq("id", userId)
+        .single();
+
+      if (targetUser?.role === "SUPER_ADMIN" && adminCount !== null && adminCount <= 1) {
+        skipped.push({ userId, reason: "Cannot delete the last super admin" });
+        continue;
+      }
+
+      // Delete related records that don't cascade (no ON DELETE CASCADE)
+      await supabase.from("TimeEntry").delete().eq("userId", userId);
+      await supabase.from("FileAttachment").delete().eq("userId", userId);
+      await supabase.from("ActivityLog").delete().eq("userId", userId);
+
+      const { error } = await supabase.from("User").delete().eq("id", userId);
+      if (error) {
+        skipped.push({ userId, reason: error.message });
+        continue;
+      }
+
+      deleted.push(userId);
     }
 
-    // Delete related records that don't cascade (no ON DELETE CASCADE)
-    await supabase.from("TimeEntry").delete().eq("userId", userId);
-    await supabase.from("FileAttachment").delete().eq("userId", userId);
-    await supabase.from("ActivityLog").delete().eq("userId", userId);
-
-    const { error } = await supabase.from("User").delete().eq("id", userId);
-    if (error) throw error;
-
-    return NextResponse.json({ message: "User deleted" });
+    return NextResponse.json({
+      deleted: deleted.length,
+      deletedIds: deleted,
+      skipped: skipped.length > 0 ? skipped : undefined,
+    });
   } catch (error: any) {
     if (error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

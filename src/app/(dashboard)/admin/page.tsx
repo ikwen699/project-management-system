@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -96,6 +96,21 @@ export default function AdminPage() {
   const [newRole, setNewRole] = useState("USER");
   const [creatingUser, setCreatingUser] = useState(false);
 
+  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+  const selectAllRef = useRef<HTMLInputElement>(null);
+
+  const currentUserId = (session?.user as any)?.id;
+  const selectableUsers = users.filter((u) => u.id !== currentUserId);
+  const allSelected = selectableUsers.length > 0 && selectableUsers.every((u) => selectedUserIds.has(u.id));
+  const someSelected = selectedUserIds.size > 0 && !allSelected;
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      selectAllRef.current.indeterminate = someSelected;
+    }
+  }, [someSelected]);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
@@ -175,6 +190,65 @@ export default function AdminPage() {
       setUsers((prev) => prev.filter((u) => u.id !== userId));
     } catch {
       toast.error("Something went wrong");
+    }
+  }
+
+  async function handleBulkDeleteUsers() {
+    const count = selectedUserIds.size;
+    if (count === 0) return;
+
+    if (!confirm(`Delete ${count} selected user${count > 1 ? "s" : ""}? This cannot be undone.`)) return;
+
+    setBulkDeleting(true);
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userIds: Array.from(selectedUserIds) }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        toast.error(data.error || "Failed to delete users");
+        return;
+      }
+      const data = await res.json();
+      const deletedCount = data.deleted || 0;
+      if (deletedCount > 0) {
+        toast.success(`${deletedCount} user${deletedCount > 1 ? "s" : ""} deleted`);
+        setUsers((prev) => prev.filter((u) => !selectedUserIds.has(u.id)));
+      }
+      if (data.skipped && data.skipped.length > 0) {
+        data.skipped.forEach((s: { userId: string; reason: string }) => {
+          toast.error(s.reason);
+        });
+      }
+      setSelectedUserIds(new Set());
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setBulkDeleting(false);
+    }
+  }
+
+  function handleToggleUserSelection(userId: string) {
+    setSelectedUserIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(userId)) {
+        next.delete(userId);
+      } else {
+        next.add(userId);
+      }
+      return next;
+    });
+  }
+
+  function handleSelectAllUsers() {
+    const currentUserId = (session?.user as any)?.id;
+    const selectableUsers = users.filter((u) => u.id !== currentUserId);
+    if (selectableUsers.every((u) => selectedUserIds.has(u.id))) {
+      setSelectedUserIds(new Set());
+    } else {
+      setSelectedUserIds(new Set(selectableUsers.map((u) => u.id)));
     }
   }
 
@@ -392,6 +466,28 @@ export default function AdminPage() {
             </button>
           </div>
 
+          {selectedUserIds.size > 0 && (
+            <div className="flex items-center gap-3 bg-muted/50 rounded-lg p-3 border border-border">
+              <span className="text-sm font-medium">
+                {selectedUserIds.size} user{selectedUserIds.size > 1 ? "s" : ""} selected
+              </span>
+              <button
+                onClick={handleBulkDeleteUsers}
+                disabled={bulkDeleting}
+                className="flex items-center gap-1.5 bg-destructive text-destructive-foreground px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-destructive/90 transition-colors disabled:opacity-50"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete Selected
+              </button>
+              <button
+                onClick={() => setSelectedUserIds(new Set())}
+                className="border border-border px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-muted transition-colors"
+              >
+                Clear Selection
+              </button>
+            </div>
+          )}
+
           <div className="bg-white rounded-xl border border-border overflow-hidden">
             {users.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground">No users found</div>
@@ -400,6 +496,15 @@ export default function AdminPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border bg-muted/50">
+                      <th className="p-3 w-12">
+                        <input
+                          ref={selectAllRef}
+                          type="checkbox"
+                          checked={allSelected}
+                          onChange={handleSelectAllUsers}
+                          className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                        />
+                      </th>
                       <th className="text-left p-3 font-medium text-muted-foreground">User</th>
                       <th className="text-left p-3 font-medium text-muted-foreground">Email</th>
                       <th className="text-left p-3 font-medium text-muted-foreground">Role</th>
@@ -407,14 +512,26 @@ export default function AdminPage() {
                       <th className="p-3 w-56">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {users.map((user) => (
-                      <tr
-                        key={user.id}
-                        className="border-b border-border last:border-0 hover:bg-muted/20"
-                      >
-                        <td className="p-3">
-                          <div className="flex items-center gap-2">
+<tbody>
+                    {users.map((user) => {
+                      const isCurrentUser = user.id === (session?.user as any)?.id;
+                      return (
+                        <tr
+                          key={user.id}
+                          className={`border-b border-border last:border-0 hover:bg-muted/20 ${
+                            selectedUserIds.has(user.id) ? "bg-primary/5" : ""
+                          }`}
+                        >
+                          <td className="p-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedUserIds.has(user.id)}
+                              onChange={() => handleToggleUserSelection(user.id)}
+                              disabled={isCurrentUser}
+                              className="h-4 w-4 rounded border-border text-primary focus:ring-primary disabled:opacity-30 disabled:cursor-not-allowed"
+                            />
+                          </td>
+                          <td className="p-3">
                             {user.avatar ? (
                               <img src={user.avatar} alt="" className="h-6 w-6 rounded-full" />
                             ) : (
@@ -425,46 +542,46 @@ export default function AdminPage() {
                               </div>
                             )}
                             <span className="font-medium">{user.name}</span>
-                          </div>
-                        </td>
-                        <td className="p-3 text-muted-foreground">{user.email}</td>
-                        <td className="p-3">
-                          <span
-                            className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                              user.role === "SUPER_ADMIN"
-                                ? "bg-amber-100 text-amber-700"
-                                : "bg-gray-100 text-gray-700"
-                            }`}
-                          >
-                            {user.role === "SUPER_ADMIN" ? "Super Admin" : "User"}
-                          </span>
-                        </td>
-                        <td className="p-3 text-muted-foreground">
-                          {new Date(user.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="p-3">
-                          <div className="flex items-center gap-2">
-                            <select
-                              value={user.role}
-                              onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                              disabled={updatingUser === user.id || user.id === (session?.user as any)?.id}
-                              className="border border-border rounded-lg px-2 py-1 text-sm outline-none disabled:opacity-50"
+                          </td>
+                          <td className="p-3 text-muted-foreground">{user.email}</td>
+                          <td className="p-3">
+                            <span
+                              className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                user.role === "SUPER_ADMIN"
+                                  ? "bg-amber-100 text-amber-700"
+                                  : "bg-gray-100 text-gray-700"
+                              }`}
                             >
-                              <option value="USER">User</option>
-                              <option value="SUPER_ADMIN">Super Admin</option>
-                            </select>
-                            <button
-                              onClick={() => handleDeleteUser(user.id, user.name)}
-                              disabled={user.id === (session?.user as any)?.id}
-                              className="p-1.5 hover:bg-destructive/10 text-destructive rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                              title="Delete user"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                              {user.role === "SUPER_ADMIN" ? "Super Admin" : "User"}
+                            </span>
+                          </td>
+                          <td className="p-3 text-muted-foreground">
+                            {new Date(user.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={user.role}
+                                onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                                disabled={updatingUser === user.id || user.id === (session?.user as any)?.id}
+                                className="border border-border rounded-lg px-2 py-1 text-sm outline-none disabled:opacity-50"
+                              >
+                                <option value="USER">User</option>
+                                <option value="SUPER_ADMIN">Super Admin</option>
+                              </select>
+                              <button
+                                onClick={() => handleDeleteUser(user.id, user.name)}
+                                disabled={user.id === (session?.user as any)?.id}
+                                className="p-1.5 hover:bg-destructive/10 text-destructive rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                title="Delete user"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
