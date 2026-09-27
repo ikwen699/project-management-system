@@ -150,6 +150,18 @@ export async function PATCH(request: Request) {
   }
 }
 
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: corsHeaders() });
+}
+
 export async function DELETE(request: Request) {
   try {
     const session = await requireSuperAdmin();
@@ -159,7 +171,7 @@ export async function DELETE(request: Request) {
     if (userIds.length === 0) {
       return NextResponse.json(
         { error: "userId or userIds is required" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders() }
       );
     }
 
@@ -202,22 +214,25 @@ export async function DELETE(request: Request) {
       deleted.push(userId);
     }
 
-    return NextResponse.json({
-      deleted: deleted.length,
-      deletedIds: deleted,
-      skipped: skipped.length > 0 ? skipped : undefined,
-    });
+    return NextResponse.json(
+      {
+        deleted: deleted.length,
+        deletedIds: deleted,
+        skipped: skipped.length > 0 ? skipped : undefined,
+      },
+      { headers: corsHeaders() }
+    );
   } catch (error: any) {
     if (error.message === "Unauthorized") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders() });
     }
     if (error.message === "Forbidden") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403, headers: corsHeaders() });
     }
     console.error("Admin delete user error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders() }
     );
   }
 }

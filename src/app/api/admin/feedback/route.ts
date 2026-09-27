@@ -11,6 +11,18 @@ function isAuthError(error: unknown): error is { message: string } {
   );
 }
 
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: corsHeaders() });
+}
+
 export async function GET() {
   try {
     await requireSuperAdmin();
@@ -68,18 +80,18 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Feedback not found" }, { status: 404 });
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json(data, { headers: corsHeaders() });
   } catch (error) {
     if (isAuthError(error)) {
       if (error.message === "Unauthorized") {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders() });
       }
       if (error.message === "Forbidden") {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        return NextResponse.json({ error: "Forbidden" }, { status: 403, headers: corsHeaders() });
       }
     }
     console.error("Admin update feedback error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500, headers: corsHeaders() });
   }
 }
 
@@ -91,24 +103,24 @@ export async function DELETE(request: Request) {
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+      return NextResponse.json({ error: "ID is required" }, { status: 400, headers: corsHeaders() });
     }
 
     const { error } = await supabase.from("Feedback").delete().eq("id", id);
 
     if (error) throw error;
 
-    return NextResponse.json({ message: "Feedback deleted" });
+    return NextResponse.json({ message: "Feedback deleted" }, { headers: corsHeaders() });
   } catch (error) {
     if (isAuthError(error)) {
       if (error.message === "Unauthorized") {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders() });
       }
       if (error.message === "Forbidden") {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        return NextResponse.json({ error: "Forbidden" }, { status: 403, headers: corsHeaders() });
       }
     }
     console.error("Admin delete feedback error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500, headers: corsHeaders() });
   }
 }
