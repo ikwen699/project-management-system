@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { FolderKanban, CheckCircle, Clock, AlertTriangle, Users, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { CardSkeleton } from "@/components/ui/Skeleton";
+import { STATUS_CHIP_CLASSES } from "@/lib/chip-colors";
 
 interface Metrics {
   totalProjects: number;
@@ -56,19 +57,13 @@ export default function DashboardPage() {
   }, []);
 
   const cards = [
-    { label: "Total Projects", value: metrics?.totalProjects ?? 0, icon: FolderKanban, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Task Completion", value: `${metrics?.taskCompletionRate ?? 0}%`, icon: CheckCircle, color: "text-green-600", bg: "bg-green-50" },
-    { label: "On-Time Rate", value: `${metrics?.onTimeCompletion ?? 0}%`, icon: Clock, color: "text-purple-600", bg: "bg-purple-50" },
-    { label: "Overdue Tasks", value: metrics?.overdueTasks ?? 0, icon: AlertTriangle, color: "text-red-600", bg: "bg-red-50" },
+    { label: "Total Projects", value: metrics?.totalProjects ?? 0, icon: FolderKanban, color: "text-status-active", bg: "bg-status-active/10" },
+    { label: "Task Completion", value: `${metrics?.taskCompletionRate ?? 0}%`, icon: CheckCircle, color: "text-status-completed", bg: "bg-status-completed/10" },
+    { label: "On-Time Rate", value: `${metrics?.onTimeCompletion ?? 0}%`, icon: Clock, color: "text-status-planning", bg: "bg-status-planning/10" },
+    { label: "Overdue Tasks", value: metrics?.overdueTasks ?? 0, icon: AlertTriangle, color: "text-overdue-text", bg: "bg-overdue-bg" },
   ];
 
-  const statusColor: Record<string, string> = {
-    PLANNING: "bg-gray-100 text-gray-700",
-    ACTIVE: "bg-green-100 text-green-700",
-    ON_HOLD: "bg-yellow-100 text-yellow-700",
-    COMPLETED: "bg-blue-100 text-blue-700",
-    CANCELLED: "bg-red-100 text-red-700",
-  };
+  const statusColor: Record<string, string> = STATUS_CHIP_CLASSES;
 
   return (
     <div className="space-y-6">
@@ -88,7 +83,7 @@ export default function DashboardPage() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {cards.map((card) => (
-              <div key={card.label} className="bg-white rounded-xl border border-border p-6">
+              <div key={card.label} className="bg-card rounded-xl border border-border p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">{card.label}</p>
@@ -102,7 +97,7 @@ export default function DashboardPage() {
             ))}
           </div>
 
-          <div className="bg-white rounded-xl border border-border p-6">
+          <div className="bg-card rounded-xl border border-border p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold flex items-center gap-2">
                 <Users className="h-5 w-5 text-primary" /> Members
@@ -148,7 +143,7 @@ export default function DashboardPage() {
             )}
           </div>
 
-          <div className="bg-white rounded-xl border border-border p-6">
+          <div className="bg-card rounded-xl border border-border p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">Recent Projects</h2>
               <Link href="/projects" className="text-sm text-primary hover:underline">View all</Link>

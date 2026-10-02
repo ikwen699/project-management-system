@@ -39,7 +39,7 @@ export default function SettingsPage() {
         <p className="text-muted-foreground">Update your personal information</p>
       </div>
 
-      <div className="bg-white rounded-xl border border-border p-6 space-y-4">
+      <div className="bg-card rounded-xl border border-border p-6 space-y-4">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center">
             <span className="text-lg font-medium text-primary-foreground">{name ? name.charAt(0).toUpperCase() : "U"}</span>
@@ -52,12 +52,12 @@ export default function SettingsPage() {
 
         <div>
           <label className="block text-sm font-medium mb-1"><User className="inline h-4 w-4 mr-1" />Name</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-white text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-muted text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1"><Mail className="inline h-4 w-4 mr-1" />Email</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-white text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-muted text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
         </div>
 
         <div className="flex justify-end">

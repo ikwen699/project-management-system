@@ -115,7 +115,7 @@ export function UserSelect({
       </button>
 
       {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-hidden flex flex-col">
+        <div className="absolute bottom-full left-0 right-0 mb-1 bg-popover border border-border rounded-lg shadow-2xl z-50 max-h-60 overflow-hidden flex flex-col">
           <div className="p-2 border-b border-border">
             <input
               ref={inputRef}

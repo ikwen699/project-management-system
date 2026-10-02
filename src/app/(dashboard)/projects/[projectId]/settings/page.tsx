@@ -117,7 +117,7 @@ export default function ProjectSettingsPage() {
         <h1 className="text-2xl font-bold">Project Settings</h1>
       </div>
 
-      <div className="bg-white rounded-xl border border-border p-6">
+      <div className="bg-card rounded-xl border border-border p-6">
         <h2 className="text-lg font-semibold mb-4">Edit Project</h2>
         <form onSubmit={handleSave} className="space-y-4">
           <div>
@@ -163,7 +163,7 @@ export default function ProjectSettingsPage() {
         </form>
       </div>
 
-      <div className="bg-white rounded-xl border border-border p-6">
+      <div className="bg-card rounded-xl border border-border p-6">
         <h2 className="text-lg font-semibold mb-4">Danger Zone</h2>
         <div className="space-y-3">
           <button onClick={handleArchive} className="flex items-center gap-2 border border-border px-4 py-2 rounded-lg text-sm font-medium hover:bg-muted transition-colors w-full justify-center">

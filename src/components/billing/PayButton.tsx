@@ -39,7 +39,7 @@ export function PayButton({
   const price = interval === "annual" ? "$120" : "$12";
 
   return (
-    <div className="bg-white rounded-xl border border-border p-6">
+    <div className="bg-card rounded-xl border border-border p-6">
       <h2 className="text-lg font-bold mb-4">Upgrade to Business</h2>
       <p className="text-sm text-muted-foreground mb-4">
         {currentPlan === "trialing"

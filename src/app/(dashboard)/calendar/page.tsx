@@ -125,7 +125,7 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-border overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
         <div className="p-4 border-b border-border"><h2 className="text-lg font-semibold">{monthName}</h2></div>
         {loading ? (
           <div className="text-center py-12 text-muted-foreground">Loading...</div>
@@ -276,7 +276,7 @@ function QuickCreateModal({ type, date, onClose, onCreated }: { type: "milestone
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+      <div className="relative bg-popover rounded-xl shadow-2xl w-full max-w-md mx-4">
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h2 className="text-lg font-semibold">New {type === "milestone" ? "Milestone" : "Meeting"}</h2>
           <button onClick={onClose} className="p-1 hover:bg-muted rounded-lg"><X className="h-5 w-5" /></button>

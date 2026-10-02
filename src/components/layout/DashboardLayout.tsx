@@ -14,7 +14,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       <Sidebar onOpenFeedback={() => setShowFeedback(true)} />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header onOpenFeedback={() => setShowFeedback(true)} />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-muted/30">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-surface">
           <PlanBanner />
           {children}
         </main>

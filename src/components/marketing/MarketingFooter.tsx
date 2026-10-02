@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Zap } from "lucide-react";
+import { XoraLogo } from "@/components/XoraLogo";
 
 const productLinks = [
   { label: "Features", href: "#features" },
@@ -15,9 +15,7 @@ export function MarketingFooter() {
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5">
-              <span className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
-                <Zap className="h-4.5 w-4.5" fill="currentColor" strokeWidth={0} />
-              </span>
+              <XoraLogo size={32} className="h-8 w-8 rounded-lg" />
               <span className="text-lg font-bold tracking-tight text-white">
                 Xora
               </span>

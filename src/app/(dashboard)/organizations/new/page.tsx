@@ -88,7 +88,7 @@ export default function NewOrganizationPage() {
         </p>
       </div>
 
-      <div className="bg-white rounded-xl border border-border p-6">
+      <div className="bg-card rounded-xl border border-border p-6">
         <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
             <div className="bg-destructive/10 text-destructive text-sm px-3 py-2 rounded-lg">

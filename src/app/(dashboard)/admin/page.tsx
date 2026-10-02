@@ -469,7 +469,7 @@ export default function AdminPage() {
       </div>
 
       {activeTab === "projects" && (
-        <div className="bg-white rounded-xl border border-border overflow-hidden">
+        <div className="bg-card rounded-xl border border-border overflow-hidden">
           {projects.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">No projects found</div>
           ) : (
@@ -566,7 +566,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          <div className="bg-white rounded-xl border border-border overflow-hidden">
+          <div className="bg-card rounded-xl border border-border overflow-hidden">
             {users.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground">No users found</div>
             ) : (
@@ -716,7 +716,7 @@ export default function AdminPage() {
             </span>
           </div>
 
-          <div className="bg-white rounded-xl border border-border overflow-hidden">
+          <div className="bg-card rounded-xl border border-border overflow-hidden">
             {filteredFeedback.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground">
                 <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -824,7 +824,7 @@ export default function AdminPage() {
             className="absolute inset-0 bg-black/50"
             onClick={() => setShowRemoveUsers(false)}
           />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+          <div className="relative bg-popover rounded-xl shadow-2xl w-full max-w-md mx-4">
             <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 className="text-lg font-semibold">
                 {removalMode === "instant" ? "Remove Users" : "Schedule User Removal"}
@@ -952,7 +952,7 @@ export default function AdminPage() {
             className="absolute inset-0 bg-black/50"
             onClick={() => setShowAddUser(false)}
           />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+          <div className="relative bg-popover rounded-xl shadow-2xl w-full max-w-md mx-4">
             <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 className="text-lg font-semibold">Add New User</h2>
               <button

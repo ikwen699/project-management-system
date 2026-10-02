@@ -60,7 +60,7 @@ export default async function BillingPage({
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-border p-6">
+      <div className="bg-card rounded-xl border border-border p-6">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-muted-foreground">Current plan</p>
@@ -72,10 +72,10 @@ export default async function BillingPage({
           <span
             className={`rounded-full px-3 py-1 text-xs font-medium ${
               entitlement.isFullAccess
-                ? "bg-green-100 text-green-700"
+                ? "bg-completed-bg text-completed-text"
                 : entitlement.isTrial
-                  ? "bg-blue-100 text-blue-700"
-                  : "bg-amber-100 text-amber-700"
+                  ? "bg-status-active/15 text-status-active"
+                  : "bg-due-soon-bg text-due-soon-text"
             }`}
           >
             {entitlement.isFullAccess

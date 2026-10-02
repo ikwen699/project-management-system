@@ -58,11 +58,11 @@ export default function PasswordPage() {
         <p className="text-muted-foreground">Update your account password</p>
       </div>
 
-      <div className="bg-white rounded-xl border border-border p-6 space-y-4">
+      <div className="bg-card rounded-xl border border-border p-6 space-y-4">
         <div>
           <label className="block text-sm font-medium mb-1"><Lock className="inline h-4 w-4 mr-1" />Current Password</label>
           <div className="relative">
-            <input type={showCurrent ? "text" : "password"} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="w-full px-3 py-2 pr-10 rounded-lg border border-border bg-white text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+            <input type={showCurrent ? "text" : "password"} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="w-full px-3 py-2 pr-10 rounded-lg border border-border bg-muted text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
             <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground">
               {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
@@ -72,7 +72,7 @@ export default function PasswordPage() {
         <div>
           <label className="block text-sm font-medium mb-1"><Lock className="inline h-4 w-4 mr-1" />New Password</label>
           <div className="relative">
-            <input type={showNew ? "text" : "password"} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full px-3 py-2 pr-10 rounded-lg border border-border bg-white text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+            <input type={showNew ? "text" : "password"} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full px-3 py-2 pr-10 rounded-lg border border-border bg-muted text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
             <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground">
               {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
@@ -81,7 +81,7 @@ export default function PasswordPage() {
 
         <div>
           <label className="block text-sm font-medium mb-1"><Lock className="inline h-4 w-4 mr-1" />Confirm New Password</label>
-          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-white text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-muted text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
         </div>
 
         <div className="flex justify-end">

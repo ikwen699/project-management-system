@@ -104,7 +104,7 @@ export default function MembersPage() {
         <h1 className="text-2xl font-bold">Members</h1>
       </div>
 
-      <div className="bg-white rounded-xl border border-border p-6">
+      <div className="bg-card rounded-xl border border-border p-6">
         <h2 className="text-lg font-semibold mb-4">Add Member</h2>
         <div className="flex gap-3">
           <div className="flex-1">
@@ -133,7 +133,7 @@ export default function MembersPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-border p-6">
+      <div className="bg-card rounded-xl border border-border p-6">
         <h2 className="text-lg font-semibold mb-4">Team Members</h2>
         <div className="space-y-3">
           {members.map((member) => (

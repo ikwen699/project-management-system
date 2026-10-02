@@ -18,8 +18,8 @@ export function TaskDeadline({ deadline, completedAt }: TaskDeadlineProps) {
     date.getTime() - now.getTime() < 3 * 24 * 60 * 60 * 1000;
 
   let className = "text-xs text-muted-foreground";
-  if (isOverdue) className = "text-xs text-red-600 font-medium";
-  else if (isDueSoon) className = "text-xs text-amber-600 font-medium";
+  if (isOverdue) className = "text-xs text-overdue-text font-medium";
+  else if (isDueSoon) className = "text-xs text-due-soon-text font-medium";
 
   return (
     <span className={`flex items-center gap-1 ${className}`}>

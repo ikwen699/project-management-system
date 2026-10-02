@@ -61,7 +61,15 @@ export function Providers({
   return (
     <SessionProvider session={session}>
       {children}
-      <Toaster position="top-right" toastOptions={{ duration: 3500 }} />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3500,
+          className: "xora-toast",
+          success: { className: "xora-toast xora-toast-success" },
+          error: { className: "xora-toast xora-toast-error" },
+        }}
+      />
     </SessionProvider>
   );
 }

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "@/components/providers/Providers";
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
 import { auth } from "@/lib/auth";
+import { themeInitScript } from "@/lib/theme-init";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,6 +21,13 @@ export const metadata: Metadata = {
   description:
     "Xora — one workspace to plan projects, organize teams, track progress, and deliver work without the back-and-forth.",
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icons/xora-icon.png", type: "image/png" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -31,7 +39,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#3b82f6",
+  themeColor: "#000000",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -48,8 +56,12 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript() }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <ServiceWorkerRegistrar />
         <Providers session={session}>{children}</Providers>

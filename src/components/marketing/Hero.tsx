@@ -10,8 +10,8 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
-  Zap,
 } from "lucide-react";
+import { XoraLogo } from "@/components/XoraLogo";
 
 const trustItems = [
   "No credit card required",
@@ -117,9 +117,7 @@ export function Hero() {
             <div className="flex">
               <aside className="hidden md:flex flex-col w-44 bg-slate-900 text-slate-300 px-3 py-4 gap-6">
                 <div className="flex items-center gap-2 px-2">
-                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-md bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
-                    <Zap className="h-3.5 w-3.5" fill="currentColor" strokeWidth={0} />
-                  </span>
+                  <XoraLogo size={24} className="h-6 w-6 rounded-md" />
                   <span className="text-sm font-bold text-white">Xora</span>
                 </div>
                 {["Dashboard", "Projects", "Calendar", "Notifications"].map(

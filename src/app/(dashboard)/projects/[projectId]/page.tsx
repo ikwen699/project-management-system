@@ -20,6 +20,11 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { UserSelect } from "@/components/ui/UserSelect";
+import {
+  STATUS_CHIP_CLASSES,
+  PRIORITY_CHIP_CLASSES,
+  COLUMN_CHIP_CLASSES,
+} from "@/lib/chip-colors";
 
 interface Member {
   userId: string;
@@ -80,27 +85,11 @@ interface ProjectDetail {
   createdAt: string;
 }
 
-const statusColors: Record<string, string> = {
-  PLANNING: "bg-purple-100 text-purple-700",
-  ACTIVE: "bg-blue-100 text-blue-700",
-  ON_HOLD: "bg-yellow-100 text-yellow-700",
-  COMPLETED: "bg-green-100 text-green-700",
-  CANCELLED: "bg-gray-100 text-gray-700",
-};
+const statusColors: Record<string, string> = STATUS_CHIP_CLASSES;
 
-const priorityColors: Record<string, string> = {
-  LOW: "bg-gray-100 text-gray-700",
-  MEDIUM: "bg-blue-100 text-blue-700",
-  HIGH: "bg-orange-100 text-orange-700",
-  URGENT: "bg-red-100 text-red-700",
-};
+const priorityColors: Record<string, string> = PRIORITY_CHIP_CLASSES;
 
-const columnColors: Record<string, string> = {
-  "To Do": "bg-gray-100 text-gray-700",
-  "In Progress": "bg-blue-100 text-blue-700",
-  Review: "bg-yellow-100 text-yellow-700",
-  Done: "bg-green-100 text-green-700",
-};
+const columnColors: Record<string, string> = COLUMN_CHIP_CLASSES;
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -482,7 +471,7 @@ export default function ProjectDetailPage() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl border border-border p-6">
+      <div className="bg-card rounded-xl border border-border p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
@@ -550,7 +539,7 @@ export default function ProjectDetailPage() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={openEditProject}
-            className="flex items-center gap-1.5 bg-white border border-border px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-muted transition-colors"
+            className="flex items-center gap-1.5 bg-card border border-border px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-accent transition-colors"
           >
             <Pencil className="h-3.5 w-3.5" /> Edit Project
           </button>
@@ -592,7 +581,7 @@ export default function ProjectDetailPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-border">
+      <div className="bg-card rounded-xl border border-border">
         <div className="p-4 border-b border-border">
           <h2 className="text-lg font-semibold">
             Tasks ({tasks.length})
@@ -747,7 +736,7 @@ export default function ProjectDetailPage() {
                         </button>
                         {taskMenuId === task.id && menuPos && (
                           <div
-                            className="fixed z-50 bg-white border border-border rounded-lg shadow-lg py-1 w-40"
+                            className="fixed z-50 bg-popover border border-border rounded-lg shadow-2xl py-1 w-40"
                             style={{ top: menuPos.top, left: menuPos.left }}
                           >
                             {project.columns?.map((col) => (
@@ -809,7 +798,7 @@ export default function ProjectDetailPage() {
             className="absolute inset-0 bg-black/50"
             onClick={() => setEditingProject(false)}
           />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="relative bg-popover rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 className="text-lg font-semibold">Edit Project</h2>
               <button
@@ -983,7 +972,7 @@ export default function ProjectDetailPage() {
             className="absolute inset-0 bg-black/50"
             onClick={() => setShowTaskForm(false)}
           />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="relative bg-popover rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 className="text-lg font-semibold">Create Task</h2>
               <button
@@ -1161,8 +1150,8 @@ export default function ProjectDetailPage() {
             className="absolute inset-0 bg-black/50"
             onClick={() => setSelectedTask(null)}
           />
-          <div className="relative bg-white w-full max-w-md h-full overflow-y-auto shadow-xl">
-            <div className="flex items-center justify-between p-4 border-b border-border sticky top-0 bg-white z-10">
+          <div className="relative bg-card text-card-foreground w-full max-w-md h-full overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between p-4 border-b border-border sticky top-0 bg-card z-10">
               <h2 className="text-lg font-semibold">Task Details</h2>
               <button
                 onClick={() => setSelectedTask(null)}

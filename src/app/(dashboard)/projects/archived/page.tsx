@@ -35,7 +35,7 @@ export default function ArchivedProjectsPage() {
       {loading ? (
         <div className="text-center py-12 text-muted-foreground">Loading...</div>
       ) : projects.length === 0 ? (
-        <div className="bg-white rounded-xl border border-border p-12 text-center text-muted-foreground">
+        <div className="bg-card rounded-xl border border-border p-12 text-center text-muted-foreground">
           <Archive className="h-12 w-12 mx-auto mb-3 opacity-50" />
           <p>No archived projects</p>
         </div>
@@ -45,7 +45,7 @@ export default function ArchivedProjectsPage() {
             <Link
               key={project.id}
               href={`/projects/${project.id}/settings`}
-              className="bg-white rounded-xl border border-border p-5 hover:shadow-md transition-shadow opacity-75 hover:opacity-100"
+              className="bg-card rounded-xl border border-border p-5 hover:shadow-md transition-shadow opacity-75 hover:opacity-100"
             >
               <h3 className="font-semibold">{project.name}</h3>
               {project.description && (

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { XoraLogo } from "@/components/XoraLogo";
 
 type PlanChoice = "starter" | "trial" | "business";
 
@@ -97,14 +98,15 @@ function RegisterForm() {
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-surface px-4 py-8">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
+          <XoraLogo size={56} className="h-14 w-14 mx-auto mb-3" />
           <h1 className="text-3xl font-bold">Xora</h1>
           <p className="text-muted-foreground mt-2">Create your account</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-border p-6">
+        <div className="bg-card rounded-xl border border-border p-6">
           <div className="mb-5">
             <p className="text-sm font-medium mb-2.5">Choose a plan</p>
             <div className="space-y-2">

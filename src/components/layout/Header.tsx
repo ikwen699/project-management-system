@@ -4,6 +4,8 @@ import { Bell, Menu, Search, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
+import { XoraLogo } from "@/components/XoraLogo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface HeaderProps {
   onOpenFeedback: () => void;
@@ -50,7 +52,7 @@ export function Header({ onOpenFeedback }: HeaderProps) {
   const userInitial = session?.user?.name ? session.user.name.charAt(0).toUpperCase() : "U";
 
   return (
-    <header className="h-16 border-b border-border bg-white flex items-center justify-between px-4 md:px-6">
+    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 md:px-6">
       <div className="flex items-center gap-4">
         <button onClick={() => setShowMobileMenu(!showMobileMenu)} className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors" aria-label="Toggle menu">
           <Menu className="h-5 w-5" />
@@ -71,6 +73,8 @@ export function Header({ onOpenFeedback }: HeaderProps) {
           )}
         </Link>
 
+        <ThemeToggle />
+
         <div className="relative" ref={userMenuRef}>
           <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-muted transition-colors" aria-label="User menu" aria-expanded={showUserMenu}>
             <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
@@ -79,7 +83,7 @@ export function Header({ onOpenFeedback }: HeaderProps) {
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-border py-1 z-50">
+            <div className="absolute right-0 mt-2 w-48 bg-popover text-popover-foreground rounded-lg shadow-2xl border border-border py-1 z-50">
               <div className="px-3 py-2 border-b border-border">
                 <p className="text-sm font-medium">{session?.user?.name || "User"}</p>
                 <p className="text-xs text-muted-foreground">{session?.user?.email || ""}</p>
@@ -107,7 +111,10 @@ export function Header({ onOpenFeedback }: HeaderProps) {
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowMobileMenu(false)} />
           <div className="absolute left-0 top-0 h-full w-64 bg-sidebar-bg text-sidebar-fg p-4">
-            <p className="text-lg font-bold mb-4">Xora</p>
+            <div className="flex items-center gap-2 mb-4">
+              <XoraLogo size={28} className="h-7 w-7" />
+              <p className="text-lg font-bold">Xora</p>
+            </div>
             <nav className="space-y-1">
               <a href="/dashboard" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Dashboard</a>
               <a href="/projects" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Projects</a>

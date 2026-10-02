@@ -147,7 +147,7 @@ export default function BoardPage() {
               <div key={column.id} className="flex-shrink-0 w-72 bg-muted/50 rounded-xl p-3">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-medium text-sm">{column.name}</h3>
-                  <span className="text-xs text-muted-foreground bg-white px-2 py-0.5 rounded-full">
+                  <span className="text-xs text-muted-foreground bg-card border border-border px-2 py-0.5 rounded-full">
                     {column.tasks.length}
                   </span>
                 </div>
@@ -169,7 +169,7 @@ export default function BoardPage() {
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                               onClick={() => setSelectedTask(task)}
-                              className={`bg-white rounded-lg p-3 border border-border border-l-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
+                              className={`bg-card rounded-lg p-3 border border-border border-l-4 shadow-sm hover:shadow-lg hover:border-primary/40 transition-shadow cursor-pointer ${
                                 snapshot.isDragging ? "shadow-lg rotate-1" : ""
                               } ${
                                 task.priority === "URGENT"
@@ -217,7 +217,7 @@ export default function BoardPage() {
 
                 <button
                   onClick={() => openCreateTask(column.id)}
-                  className="w-full mt-2 flex items-center justify-center gap-1 text-sm text-muted-foreground hover:text-foreground py-2 rounded-lg hover:bg-white transition-colors"
+                  className="w-full mt-2 flex items-center justify-center gap-1 text-sm text-muted-foreground hover:text-foreground py-2 rounded-lg hover:bg-card transition-colors"
                 >
                   <Plus className="h-4 w-4" /> Add Task
                 </button>

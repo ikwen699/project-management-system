@@ -1,47 +1,118 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --primary: #2563eb;
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Dark is the default theme. */
+:root,
+.dark {
+  --background: #000000;
+  --foreground: #f5f3ff;
+  --card: #0c0a12;
+  --card-foreground: #f5f3ff;
+  --popover: #12101a;
+  --popover-foreground: #f5f3ff;
+  --primary: #8b5cf6;
   --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
+  --primary-hover: #7c3aed;
+  --secondary: #17131f;
+  --secondary-foreground: #ede9fe;
+  --muted: #14111c;
+  --muted-foreground: #a49bb8;
+  --accent: #1c1626;
+  --accent-foreground: #ede9fe;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #2563eb;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --border: #241d31;
+  --input: #241d31;
+  --ring: #8b5cf6;
   --radius: 0.5rem;
+  --grid-line: rgb(167 139 250 / 0.07);
 
-  --sidebar-bg: #0f172a;
-  --sidebar-fg: #e2e8f0;
-  --sidebar-accent: #1e293b;
-  --sidebar-border: #334155;
+  --surface: #07060c;
+  --surface-foreground: #f5f3ff;
+
+  --sidebar-bg: #05040a;
+  --sidebar-fg: #e9e5f5;
+  --sidebar-accent: #1a1428;
+  --sidebar-border: #1e1830;
+
+  --priority-low: #a1a1aa;
+  --priority-medium: #a78bfa;
+  --priority-high: #fb923c;
+  --priority-urgent: #f87171;
+
+  --status-planning: #c084fc;
+  --status-active: #a78bfa;
+  --status-on-hold: #fbbf24;
+  --status-completed: #34d399;
+  --status-cancelled: #71717a;
+
+  --overdue-bg: #2d0f1c;
+  --overdue-text: #fca5a5;
+  --due-soon-bg: #2b2110;
+  --due-soon-text: #fcd34d;
+  --completed-bg: #0d2a1f;
+  --completed-text: #6ee7b7;
+
+  --scrollbar-thumb: #2a2238;
+  --scrollbar-thumb-hover: #3d3153;
+}
+
+.light {
+  --background: #faf9ff;
+  --foreground: #1a1425;
+  --card: #ffffff;
+  --card-foreground: #1a1425;
+  --popover: #ffffff;
+  --popover-foreground: #1a1425;
+  --primary: #7c3aed;
+  --primary-foreground: #ffffff;
+  --primary-hover: #6d28d9;
+  --secondary: #f1eef8;
+  --secondary-foreground: #1a1425;
+  --muted: #f3f0fa;
+  --muted-foreground: #6b6382;
+  --accent: #ece7f8;
+  --accent-foreground: #1a1425;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --success: #059669;
+  --warning: #d97706;
+  --border: #e6e1f2;
+  --input: #e6e1f2;
+  --ring: #7c3aed;
+  --grid-line: rgb(124 58 237 / 0.06);
+
+  --surface: #f4f1fb;
+  --surface-foreground: #1a1425;
+
+  --sidebar-bg: #ffffff;
+  --sidebar-fg: #1a1425;
+  --sidebar-accent: #f0ebfb;
+  --sidebar-border: #ece7f8;
 
   --priority-low: #6b7280;
-  --priority-medium: #3b82f6;
-  --priority-high: #f97316;
-  --priority-urgent: #ef4444;
+  --priority-medium: #7c3aed;
+  --priority-high: #ea580c;
+  --priority-urgent: #dc2626;
 
-  --status-planning: #a855f7;
-  --status-active: #3b82f6;
-  --status-on-hold: #eab308;
-  --status-completed: #22c55e;
+  --status-planning: #9333ea;
+  --status-active: #7c3aed;
+  --status-on-hold: #ca8a04;
+  --status-completed: #16a34a;
   --status-cancelled: #6b7280;
 
   --overdue-bg: #fef2f2;
   --overdue-text: #dc2626;
   --due-soon-bg: #fffbeb;
-  --due-soon-text: #d97706;
-  --completed-bg: #f0fdf4;
-  --completed-text: #16a34a;
+  --due-soon-text: #b45309;
+  --completed-bg: #ecfdf5;
+  --completed-text: #047857;
+
+  --scrollbar-thumb: #d8d2e8;
+  --scrollbar-thumb-hover: #c1b8da;
 }
 
 @theme inline {
@@ -49,8 +120,11 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -59,9 +133,14 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
 
   --color-sidebar-bg: var(--sidebar-bg);
   --color-sidebar-fg: var(--sidebar-fg);
@@ -104,33 +183,79 @@ body {
   border-color: var(--border);
 }
 
+::selection {
+  background: color-mix(in oklab, var(--primary) 35%, transparent);
+  color: var(--foreground);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  background-clip: content-box;
+}
+
+.xora-toast {
+  background: var(--card) !important;
+  color: var(--foreground) !important;
+  border: 1px solid var(--border) !important;
+  border-left: 3px solid var(--primary) !important;
+  box-shadow: 0 16px 40px -16px rgb(0 0 0 / 0.7) !important;
+}
+
+.xora-toast-success {
+  border-left-color: var(--success) !important;
+}
+
+.xora-toast-error {
+  border-left-color: var(--destructive) !important;
+}
+
 @layer utilities {
   .bg-grid {
     background-image:
-      linear-gradient(to right, rgb(15 23 42 / 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(15 23 42 / 0.05) 1px, transparent 1px);
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
     background-size: 44px 44px;
   }
 
   .bg-grid-dark {
     background-image:
-      linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+      linear-gradient(to right, rgb(167 139 250 / 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(167 139 250 / 0.08) 1px, transparent 1px);
     background-size: 44px 44px;
   }
 
   .text-gradient {
-    background-image: linear-gradient(90deg, #2563eb, #7c3aed);
+    background-image: linear-gradient(90deg, #c4b5fd, #8b5cf6 55%, #d946ef);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
   .text-gradient-light {
-    background-image: linear-gradient(90deg, #60a5fa, #a78bfa);
+    background-image: linear-gradient(90deg, #7c3aed, #a855f7);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+
+  .glow-primary {
+    box-shadow: 0 10px 40px -12px color-mix(in oklab, var(--primary) 55%, transparent);
   }
 
   .animate-fade-up {

@@ -17,6 +17,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { useState } from "react";
+import { XoraLogo } from "@/components/XoraLogo";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -53,8 +54,13 @@ export function Sidebar({ onOpenFeedback }: SidebarProps) {
           collapsed ? "justify-center" : "justify-between"
         }`}
       >
-        {!collapsed && (
-          <span className="text-lg font-bold tracking-tight">Xora</span>
+        {!collapsed ? (
+          <span className="flex items-center gap-2">
+            <XoraLogo size={28} className="h-7 w-7" />
+            <span className="text-lg font-bold tracking-tight">Xora</span>
+          </span>
+        ) : (
+          <XoraLogo size={28} className="h-7 w-7" />
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
@@ -81,8 +87,8 @@ export function Sidebar({ onOpenFeedback }: SidebarProps) {
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-sidebar-accent text-white"
-                  : "text-sidebar-fg/70 hover:bg-sidebar-accent hover:text-white"
+                  ? "bg-sidebar-accent text-sidebar-fg shadow-[inset_2px_0_0_0_var(--primary)]"
+                  : "text-sidebar-fg/70 hover:bg-sidebar-accent hover:text-sidebar-fg"
               } ${collapsed ? "justify-center" : ""}`}
               title={collapsed ? item.label : undefined}
               aria-label={item.label}
@@ -95,7 +101,7 @@ export function Sidebar({ onOpenFeedback }: SidebarProps) {
 
         <button
           onClick={onOpenFeedback}
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-sidebar-fg/70 hover:bg-sidebar-accent hover:text-white ${collapsed ? "justify-center" : ""}`}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-sidebar-fg/70 hover:bg-sidebar-accent hover:text-sidebar-fg ${collapsed ? "justify-center" : ""}`}
           aria-label="Send Feedback"
         >
           <MessageSquare className="h-5 w-5 shrink-0" />

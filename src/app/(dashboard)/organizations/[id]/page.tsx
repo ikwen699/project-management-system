@@ -441,7 +441,7 @@ export default function OrganizationDetailPage() {
       </div>
 
       {org.projects.length > 0 && (
-        <div className="bg-white rounded-xl border border-border p-5">
+        <div className="bg-card rounded-xl border border-border p-5">
           <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
             <FolderKanban className="h-5 w-5 text-primary" />
             Linked Projects ({org.projects.length})
@@ -465,7 +465,7 @@ export default function OrganizationDetailPage() {
       )}
 
       {/* Teams */}
-      <div className="bg-white rounded-xl border border-border p-5">
+      <div className="bg-card rounded-xl border border-border p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Teams ({org.teams.length})</h2>
           {isAdmin && (
@@ -597,7 +597,7 @@ export default function OrganizationDetailPage() {
       </div>
 
       {/* Members */}
-      <div className="bg-white rounded-xl border border-border p-5">
+      <div className="bg-card rounded-xl border border-border p-5">
         <h2 className="text-lg font-semibold mb-4">
           Members ({org.memberCount})
         </h2>
@@ -652,7 +652,7 @@ export default function OrganizationDetailPage() {
 
       {/* Pending invites */}
       {(isAdmin && org.pendingInvites.length > 0) ? (
-        <div className="bg-white rounded-xl border border-border p-5">
+        <div className="bg-card rounded-xl border border-border p-5">
           <h2 className="text-lg font-semibold mb-4">
             Pending Invites ({org.pendingInvites.length})
           </h2>
@@ -704,7 +704,7 @@ export default function OrganizationDetailPage() {
             className="absolute inset-0 bg-black/50"
             onClick={closeInvite}
           />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md mx-4">
+          <div className="relative bg-popover rounded-xl shadow-2xl w-full max-w-md mx-4">
             <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 className="text-lg font-semibold">Invite Member</h2>
               <button

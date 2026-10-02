@@ -374,8 +374,8 @@ export function TaskDetail({
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white w-full max-w-lg h-full overflow-y-auto shadow-xl">
-        <div className="flex items-center justify-between p-4 border-b border-border sticky top-0 bg-white z-10">
+      <div className="relative bg-card text-card-foreground w-full max-w-lg h-full overflow-y-auto shadow-2xl">
+        <div className="flex items-center justify-between p-4 border-b border-border sticky top-0 bg-card z-10">
           <h2 className="text-lg font-semibold">Task Details</h2>
           <div className="flex items-center gap-2">
             <button
@@ -640,7 +640,7 @@ export function TaskDetail({
                       {timeEntries.map((entry) => (
                         <div
                           key={entry.id}
-                          className="bg-white border border-border rounded-lg p-3 text-sm"
+                          className="bg-muted border border-border rounded-lg p-3 text-sm"
                         >
                           <div className="flex items-start justify-between">
                             <div>
@@ -709,7 +709,7 @@ export function TaskDetail({
                       {attachments.map((att) => (
                         <div
                           key={att.id}
-                          className="bg-white border border-border rounded-lg p-3 flex items-center gap-3"
+                          className="bg-muted border border-border rounded-lg p-3 flex items-center gap-3"
                         >
                           <File className="h-8 w-8 text-muted-foreground flex-shrink-0" />
                           <div className="flex-1 min-w-0">

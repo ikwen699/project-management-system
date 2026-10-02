@@ -46,7 +46,7 @@ export default function OrganizationsPage() {
       {loading ? (
         <TableSkeleton rows={3} />
       ) : organizations.length === 0 ? (
-        <div className="bg-white rounded-xl border border-border p-12 text-center text-muted-foreground">
+        <div className="bg-card rounded-xl border border-border p-12 text-center text-muted-foreground">
           <Building2 className="h-12 w-12 mx-auto mb-3 opacity-50" />
           <p>You haven&apos;t joined any organisation yet</p>
           <Link
@@ -62,7 +62,7 @@ export default function OrganizationsPage() {
             <Link
               key={org.id}
               href={`/organizations/${org.id}`}
-              className="bg-white rounded-xl border border-border p-5 hover:shadow-sm transition-shadow group"
+              className="bg-card rounded-xl border border-border p-5 hover:shadow-sm transition-shadow group"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3 min-w-0">

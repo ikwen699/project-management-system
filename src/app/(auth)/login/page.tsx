@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { XoraLogo } from "@/components/XoraLogo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -43,16 +44,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-surface px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
+          <XoraLogo size={56} className="h-14 w-14 mx-auto mb-3" />
           <h1 className="text-3xl font-bold">Xora</h1>
           <p className="text-muted-foreground mt-2">
             Sign in to your account
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-border p-6">
+        <div className="bg-card rounded-xl border border-border p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="bg-destructive/10 text-destructive text-sm px-3 py-2 rounded-lg">

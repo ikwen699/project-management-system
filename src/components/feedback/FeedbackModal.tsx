@@ -66,7 +66,7 @@ export function FeedbackModal({ onClose }: FeedbackModalProps) {
         onClick={onClose}
         aria-hidden="true"
       />
-      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 animate-in fade-in-0 zoom-in-95">
+      <div className="relative bg-popover rounded-xl shadow-2xl w-full max-w-lg mx-4 animate-in fade-in-0 zoom-in-95">
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h2 className="text-lg font-semibold">Send Feedback</h2>
           <button

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpDown } from "lucide-react";
+import { PRIORITY_CHIP_CLASSES } from "@/lib/chip-colors";
 
 interface Task {
   id: string;
@@ -16,12 +17,7 @@ interface Task {
   timeSpent: number | null;
 }
 
-const priorityColors: Record<string, string> = {
-  LOW: "bg-gray-100 text-gray-700",
-  MEDIUM: "bg-blue-100 text-blue-700",
-  HIGH: "bg-orange-100 text-orange-700",
-  URGENT: "bg-red-100 text-red-700",
-};
+const priorityColors: Record<string, string> = PRIORITY_CHIP_CLASSES;
 
 export default function ListPage() {
   const params = useParams();
@@ -74,7 +70,7 @@ export default function ListPage() {
         <h1 className="text-2xl font-bold">List View</h1>
       </div>
 
-      <div className="bg-white rounded-xl border border-border overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
         <table className="w-full">
           <thead>
             <tr className="border-b border-border bg-muted/50">

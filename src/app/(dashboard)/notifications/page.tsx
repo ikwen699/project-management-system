@@ -115,13 +115,13 @@ export default function NotificationsPage() {
       {loading ? (
         <TableSkeleton rows={5} />
       ) : notifications.length === 0 ? (
-        <div className="bg-white rounded-xl border border-border p-12 text-center text-muted-foreground">
+        <div className="bg-card rounded-xl border border-border p-12 text-center text-muted-foreground">
           <Bell className="h-12 w-12 mx-auto mb-3 opacity-50" />
           <p>No notifications yet</p>
           <p className="text-sm mt-1">You'll be notified about important events</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-border divide-y divide-border">
+        <div className="bg-card rounded-xl border border-border divide-y divide-border">
           {notifications.map((notification) => (
             <div
               key={notification.id}

@@ -49,7 +49,7 @@ export default function NotificationSettingsPage() {
         ))}
       </div>
 
-      <div className="bg-white rounded-xl border border-border p-6 space-y-6">
+      <div className="bg-card rounded-xl border border-border p-6 space-y-6">
         <div>
           <h2 className="text-lg font-semibold mb-4">
             Notification Preferences
@@ -63,7 +63,7 @@ export default function NotificationSettingsPage() {
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" defaultChecked className="sr-only peer" />
-              <div className="w-9 h-5 bg-gray-200 peer-focus:ring-2 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+              <div className="w-9 h-5 bg-border peer-focus:ring-2 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-card after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
             </label>
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function NotificationSettingsPage() {
                   defaultChecked
                   className="sr-only peer"
                 />
-                <div className="w-9 h-5 bg-gray-200 peer-focus:ring-2 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                <div className="w-9 h-5 bg-border peer-focus:ring-2 peer-focus:ring-ring rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-card after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
               </label>
             </div>
           ))}

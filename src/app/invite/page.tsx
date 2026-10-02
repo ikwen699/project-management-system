@@ -12,6 +12,7 @@ import {
   UserPlus,
   XCircle,
 } from "lucide-react";
+import { XoraLogo } from "@/components/XoraLogo";
 
 interface InviteInfo {
   email: string;
@@ -89,13 +90,14 @@ function InvitePageInner() {
     inviteExpired || invite?.status === "EXPIRED";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-surface px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
+          <XoraLogo size={56} className="h-14 w-14 mx-auto mb-3" />
           <h1 className="text-3xl font-bold">Xora</h1>
         </div>
 
-        <div className="bg-white rounded-xl border border-border p-6 text-center">
+        <div className="bg-card rounded-xl border border-border p-6 text-center">
           {state === "loading" && <p className="text-muted-foreground">Loading invitation…</p>}
 
           {state === "notfound" && (

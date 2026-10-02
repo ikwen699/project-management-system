@@ -1,4 +1,4 @@
-const CACHE_NAME = "pms-v1";
+const CACHE_NAME = "pms-v2";
 const STATIC_ASSETS = [
   "/",
   "/login",
@@ -6,7 +6,7 @@ const STATIC_ASSETS = [
   "/dashboard",
   "/projects",
   "/calendar",
-  "/icons/icon.svg",
+  "/icons/xora-icon-192.png",
   "/manifest.json",
 ];
 
