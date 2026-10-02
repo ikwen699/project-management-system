@@ -29,13 +29,13 @@ const pains = [
 
 export function Problem() {
   return (
-    <section className="relative py-24 md:py-32 bg-slate-50">
+    <section className="relative py-24 md:py-32 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold uppercase tracking-wide">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-priority-urgent/15 text-priority-urgent text-xs font-semibold uppercase tracking-wide">
             The problem
           </span>
-          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
+          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
             Your projects shouldn&apos;t feel like a daily fire drill.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
@@ -47,17 +47,17 @@ export function Problem() {
           {pains.map((pain, i) => (
             <div
               key={pain.title}
-              className="group bg-white border border-border rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+              className="group bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
               <div className="flex items-center justify-between">
-                <span className="inline-flex items-center justify-center h-10 w-10 rounded-xl bg-red-50 text-red-500 group-hover:scale-105 transition-transform">
+                <span className="inline-flex items-center justify-center h-10 w-10 rounded-xl bg-priority-urgent/15 text-priority-urgent group-hover:scale-105 transition-transform">
                   <XCircle className="h-5 w-5" />
                 </span>
-                <span className="text-xs font-semibold text-slate-300">
+                <span className="text-xs font-semibold text-muted-foreground">
                   {String(i + 1).padStart(2, "0")}
                 </span>
               </div>
-              <h3 className="mt-4 font-semibold text-slate-900">{pain.title}</h3>
+              <h3 className="mt-4 font-semibold text-foreground">{pain.title}</h3>
               <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
                 {pain.description}
               </p>
@@ -66,9 +66,9 @@ export function Problem() {
 
           <a
             href="#how-it-works"
-            className="group flex flex-col justify-between bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-6 text-white shadow-lg shadow-blue-600/20 hover:shadow-xl hover:shadow-blue-600/30 hover:-translate-y-0.5 transition-all"
+            className="group flex flex-col justify-between bg-gradient-to-br from-violet-600 to-purple-600 rounded-2xl p-6 text-white shadow-lg shadow-violet-600/20 hover:shadow-xl hover:shadow-violet-600/30 hover:-translate-y-0.5 transition-all"
           >
-            <p className="text-sm text-blue-100">Sound familiar?</p>
+            <p className="text-sm text-violet-100">Sound familiar?</p>
             <p className="mt-2 font-semibold leading-snug">
               There&apos;s a better way to run your projects.
             </p>
@@ -79,11 +79,11 @@ export function Problem() {
           </a>
         </div>
 
-        <div className="mt-14 mx-auto max-w-3xl rounded-2xl bg-white border border-border p-6 sm:p-8 text-center shadow-sm">
-          <p className="text-lg sm:text-xl text-slate-700">
+        <div className="mt-14 mx-auto max-w-3xl rounded-2xl bg-card border border-border p-6 sm:p-8 text-center shadow-sm">
+          <p className="text-lg sm:text-xl text-muted-foreground">
             The problem isn&apos;t that your team isn&apos;t working hard.
           </p>
-          <p className="mt-2 text-lg sm:text-xl font-bold text-slate-900">
+          <p className="mt-2 text-lg sm:text-xl font-bold text-foreground">
             It&apos;s that the work isn&apos;t organized in{" "}
             <span className="text-gradient">one system</span>.
           </p>

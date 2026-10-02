@@ -14,7 +14,7 @@ const features = [
     description:
       "Break complex projects into manageable tasks, set deadlines, and keep everyone aligned from day one.",
     tags: ["Tasks", "Milestones", "Deadlines"],
-    gradient: "from-blue-600 to-indigo-600",
+    gradient: "from-violet-600 to-purple-600",
   },
   {
     icon: LayoutDashboard,
@@ -60,13 +60,13 @@ const features = [
 
 export function Features() {
   return (
-    <section id="features" className="scroll-mt-20 py-24 md:py-32 bg-slate-50">
+    <section id="features" className="scroll-mt-20 py-24 md:py-32 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-xs font-semibold uppercase tracking-wide">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold uppercase tracking-wide">
             Features
           </span>
-          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
+          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
             Built to solve real problems,
             <span className="block text-gradient">not add more tools.</span>
           </h2>
@@ -79,12 +79,12 @@ export function Features() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="group bg-white border border-border rounded-2xl p-7 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
+              className="group bg-card border border-border rounded-2xl p-7 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
             >
               <span className={`inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br ${feature.gradient} text-white shadow-md group-hover:scale-105 transition-transform`}>
                 <feature.icon className="h-5.5 w-5.5" />
               </span>
-              <h3 className="mt-5 text-lg font-bold text-slate-900">
+              <h3 className="mt-5 text-lg font-bold text-foreground">
                 {feature.title}
               </h3>
               <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
@@ -94,7 +94,7 @@ export function Features() {
                 {feature.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-medium"
+                    className="px-2.5 py-1 rounded-md bg-muted text-muted-foreground text-xs font-medium"
                   >
                     {tag}
                   </span>

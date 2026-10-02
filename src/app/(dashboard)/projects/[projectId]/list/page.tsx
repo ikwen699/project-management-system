@@ -107,7 +107,7 @@ export default function ListPage() {
                 </td>
                 <td className="px-4 py-3 text-sm">
                   {task.deadline ? (
-                    <span className={new Date(task.deadline) < new Date() ? "text-red-600" : ""}>
+                    <span className={new Date(task.deadline) < new Date() ? "text-overdue-text" : ""}>
                       {new Date(task.deadline).toLocaleDateString()}
                     </span>
                   ) : (

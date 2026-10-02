@@ -15,7 +15,7 @@ const transparency = [
     icon: Rocket,
     title: "Simple setup",
     description: "Get your workspace running without weeks of implementation.",
-    gradient: "from-blue-600 to-indigo-600",
+    gradient: "from-violet-600 to-purple-600",
   },
   {
     icon: Tag,
@@ -72,13 +72,13 @@ const security = [
 
 export function Trust() {
   return (
-    <section id="trust" className="scroll-mt-20 py-24 md:py-32 bg-slate-50">
+    <section id="trust" className="scroll-mt-20 py-24 md:py-32 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-semibold uppercase tracking-wide">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold uppercase tracking-wide">
             Trust
           </span>
-          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
+          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
             Built with your team&apos;s
             <span className="block text-gradient">work in mind.</span>
           </h2>
@@ -94,12 +94,12 @@ export function Trust() {
             {transparency.map((item) => (
               <div
                 key={item.title}
-                className="bg-white border border-border rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+                className="bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
               >
                 <span className={`inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br ${item.gradient} text-white shadow-sm`}>
                   <item.icon className="h-5 w-5" />
                 </span>
-                <h3 className="mt-4 font-bold text-slate-900">{item.title}</h3>
+                <h3 className="mt-4 font-bold text-foreground">{item.title}</h3>
                 <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
                   {item.description}
                 </p>
@@ -108,13 +108,13 @@ export function Trust() {
           </div>
 
           <div>
-            <div className="rounded-2xl bg-slate-900 p-7 sm:p-9 text-slate-200 shadow-xl overflow-hidden relative">
-              <div className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-blue-500/20 blur-3xl" />
+            <div className="rounded-2xl bg-sidebar-bg p-7 sm:p-9 text-muted-foreground shadow-xl overflow-hidden relative">
+              <div className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-primary/20 blur-3xl" />
               <div className="relative">
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-foreground">
                   Your projects deserve a system you can trust.
                 </h3>
-                <p className="mt-3 text-sm text-slate-400 leading-relaxed">
+                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
                   Xora isn&apos;t just storing tasks — it holds client
                   information, documents, conversations, and strategy. Here&apos;s
                   how we protect it:
@@ -123,14 +123,14 @@ export function Trust() {
                 <ul className="mt-7 space-y-4">
                   {security.map((item) => (
                     <li key={item.title} className="flex items-start gap-4">
-                      <span className="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-white/10 text-blue-300 shrink-0">
+                      <span className="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-accent text-violet-200 shrink-0">
                         <item.icon className="h-4.5 w-4.5" />
                       </span>
                       <div>
-                        <h4 className="font-semibold text-white text-sm">
+                        <h4 className="font-semibold text-foreground text-sm">
                           {item.title}
                         </h4>
-                        <p className="mt-0.5 text-sm text-slate-400 leading-relaxed">
+                        <p className="mt-0.5 text-sm text-muted-foreground leading-relaxed">
                           {item.description}
                         </p>
                       </div>

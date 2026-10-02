@@ -680,7 +680,7 @@ export default function OrganizationDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium">
+                  <span className="text-xs bg-due-soon-bg text-due-soon-text px-2 py-0.5 rounded-full font-medium">
                     Pending
                   </span>
                   <button

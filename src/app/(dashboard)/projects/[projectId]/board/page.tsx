@@ -9,6 +9,7 @@ import { TaskForm } from "@/components/tasks/TaskForm";
 import { TaskDetail } from "@/components/tasks/TaskDetail";
 import { TaskPriorityBadge } from "@/components/tasks/TaskPriorityBadge";
 import { TaskDeadline } from "@/components/tasks/TaskDeadline";
+import { priorityRailClass } from "@/lib/chip-colors";
 import toast from "react-hot-toast";
 
 interface Task {
@@ -171,15 +172,7 @@ export default function BoardPage() {
                               onClick={() => setSelectedTask(task)}
                               className={`bg-card rounded-lg p-3 border border-border border-l-4 shadow-sm hover:shadow-lg hover:border-primary/40 transition-shadow cursor-pointer ${
                                 snapshot.isDragging ? "shadow-lg rotate-1" : ""
-                              } ${
-                                task.priority === "URGENT"
-                                  ? "border-l-red-500"
-                                  : task.priority === "HIGH"
-                                  ? "border-l-orange-500"
-                                  : task.priority === "MEDIUM"
-                                  ? "border-l-blue-500"
-                                  : "border-l-gray-400"
-                              }`}
+                              } ${priorityRailClass(task.priority)}`}
                             >
                               <p className="text-sm font-medium mb-2">{task.title}</p>
                               <div className="flex items-center justify-between">

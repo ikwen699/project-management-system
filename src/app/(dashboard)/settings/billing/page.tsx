@@ -43,8 +43,8 @@ export default async function BillingPage({
 
       {status === "success" && (
         <div className="flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 p-4">
-          <CheckCircle2 className="mt-0.5 h-5 w-5 text-green-600" />
-          <p className="text-sm text-green-800">
+          <CheckCircle2 className="mt-0.5 h-5 w-5 text-status-completed" />
+          <p className="text-sm text-completed-text">
             Payment confirmed! Your Business plan is now active. Refresh the page
             to see your updated access.
           </p>
@@ -52,8 +52,8 @@ export default async function BillingPage({
       )}
       {status === "error" && (
         <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
-          <XCircle className="mt-0.5 h-5 w-5 text-red-600" />
-          <p className="text-sm text-red-800">
+          <XCircle className="mt-0.5 h-5 w-5 text-overdue-text" />
+          <p className="text-sm text-overdue-text">
             We couldn&apos;t confirm your payment. If you were charged, it will
             be applied automatically shortly — or try again.
           </p>

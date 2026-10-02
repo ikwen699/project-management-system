@@ -36,14 +36,14 @@ const faqs = [
 
 export function Faq() {
   return (
-    <section id="faq" className="scroll-mt-20 py-24 md:py-32 bg-slate-50">
+    <section id="faq" className="scroll-mt-20 py-24 md:py-32 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
           <div>
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold uppercase tracking-wide">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-muted-foreground text-xs font-semibold uppercase tracking-wide">
               FAQ
             </span>
-            <h2 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
+            <h2 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
               Questions, answered.
             </h2>
             <p className="mt-4 text-muted-foreground leading-relaxed">
@@ -51,17 +51,17 @@ export function Faq() {
               there&apos;s something else on your mind, we&apos;re here to help.
             </p>
 
-            <div className="mt-8 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 p-7 text-white shadow-lg shadow-blue-600/20">
-              <span className="inline-flex items-center justify-center h-11 w-11 rounded-xl bg-white/15">
+            <div className="mt-8 rounded-2xl bg-gradient-to-br from-violet-600 to-purple-600 p-7 text-white shadow-lg shadow-violet-600/20">
+              <span className="inline-flex items-center justify-center h-11 w-11 rounded-xl bg-primary/20">
                 <MessageCircle className="h-5.5 w-5.5" />
               </span>
               <h3 className="mt-4 font-bold">Still have questions?</h3>
-              <p className="mt-1.5 text-sm text-blue-100 leading-relaxed">
+              <p className="mt-1.5 text-sm text-violet-100 leading-relaxed">
                 Reach out and our team will get back to you.
               </p>
               <Link
                 href="mailto:support@xora.app"
-                className="mt-5 inline-flex items-center rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-indigo-600 hover:brightness-95 transition-all"
+                className="mt-5 inline-flex items-center rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-primary hover:brightness-95 transition-all"
               >
                 Contact us
               </Link>
@@ -72,13 +72,13 @@ export function Faq() {
             {faqs.map((faq) => (
               <details
                 key={faq.question}
-                className="group bg-white border border-border rounded-2xl shadow-sm open:shadow-md transition-shadow"
+                className="group bg-card border border-border rounded-2xl shadow-sm open:shadow-md transition-shadow"
               >
                 <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
-                  <span className="font-semibold text-slate-900">
+                  <span className="font-semibold text-foreground">
                     {faq.question}
                   </span>
-                  <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-slate-100 text-slate-500 shrink-0 group-open:bg-indigo-50 group-open:text-indigo-600 transition-colors">
+                  <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-muted text-muted-foreground shrink-0 group-open:bg-primary/15 group-open:text-primary transition-colors">
                     <Plus className="h-4 w-4 group-open:rotate-45 transition-transform" />
                   </span>
                 </summary>

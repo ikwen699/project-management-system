@@ -24,7 +24,7 @@ export function MarketingHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
           <XoraLogo size={32} className="h-8 w-8 rounded-lg" />
@@ -53,7 +53,7 @@ export function MarketingHeader() {
           </Link>
           <Link
             href="/register"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm shadow-blue-600/20 hover:brightness-110 transition-all"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold bg-gradient-to-r from-violet-600 to-purple-600 text-white px-4 py-2 rounded-lg shadow-sm shadow-violet-600/25 hover:brightness-110 transition-all"
           >
             Get Started
             <ArrowRight className="h-4 w-4" />
@@ -70,7 +70,7 @@ export function MarketingHeader() {
       </div>
 
       {menuOpen && (
-        <div className="md:hidden border-t border-border bg-white/95 backdrop-blur-xl px-4 py-4 space-y-1">
+        <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-xl px-4 py-4 space-y-1">
           {navLinks.map((link) => (
             <a
               key={link.href}
@@ -92,7 +92,7 @@ export function MarketingHeader() {
             <Link
               href="/register"
               onClick={() => setMenuOpen(false)}
-              className="flex-1 inline-flex items-center justify-center gap-1.5 text-sm font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:brightness-110 transition-all"
+              className="flex-1 inline-flex items-center justify-center gap-1.5 text-sm font-semibold bg-gradient-to-r from-violet-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:brightness-110 transition-all"
             >
               Get Started
               <ArrowRight className="h-4 w-4" />

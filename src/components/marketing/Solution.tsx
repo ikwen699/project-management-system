@@ -12,13 +12,13 @@ const steps = [
     icon: ClipboardList,
     title: "Plan",
     description: "Set objectives, timelines, and milestones.",
-    gradient: "from-blue-600 to-indigo-600",
+    gradient: "from-violet-600 to-purple-600",
   },
   {
     icon: UserPlus,
     title: "Assign",
     description: "Give every task an owner and a deadline.",
-    gradient: "from-indigo-500 to-violet-600",
+    gradient: "from-purple-500 to-fuchsia-600",
   },
   {
     icon: MessageSquare,
@@ -43,13 +43,13 @@ const steps = [
 export function Solution() {
   return (
     <section className="relative py-24 md:py-32 overflow-hidden">
-      <div className="absolute -top-32 right-0 h-[360px] w-[360px] rounded-full bg-indigo-500/10 blur-3xl" />
+      <div className="absolute -top-32 right-0 h-[360px] w-[360px] rounded-full bg-primary/150/10 blur-3xl" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-semibold uppercase tracking-wide">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold uppercase tracking-wide">
             The solution
           </span>
-          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
+          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
             Everything your team needs.
             <span className="block text-gradient">One place to manage it.</span>
           </h2>
@@ -68,16 +68,16 @@ export function Solution() {
                   i === steps.length - 1 ? "hidden" : ""
                 }`}
               >
-                <ChevronRight className="h-5 w-5 text-slate-300" />
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
               </div>
-              <div className="group h-full bg-white border border-border rounded-2xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all">
+              <div className="group h-full bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all">
                 <span className={`inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br ${step.gradient} text-white shadow-md group-hover:scale-105 transition-transform`}>
                   <step.icon className="h-5.5 w-5.5" />
                 </span>
-                <p className="mt-4 text-xs font-bold text-slate-400">
+                <p className="mt-4 text-xs font-bold text-muted-foreground">
                   Step {i + 1}
                 </p>
-                <h3 className="mt-1 font-bold text-slate-900">{step.title}</h3>
+                <h3 className="mt-1 font-bold text-foreground">{step.title}</h3>
                 <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
                   {step.description}
                 </p>

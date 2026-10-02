@@ -13,14 +13,14 @@ const personas = [
     title: "Project Managers",
     description:
       "Get complete visibility without chasing your team for updates.",
-    gradient: "from-blue-600 to-indigo-600",
+    gradient: "from-violet-600 to-purple-600",
   },
   {
     icon: Users,
     title: "Team Leaders",
     description:
       "Keep responsibilities clear and the team moving toward one goal.",
-    gradient: "from-indigo-500 to-violet-600",
+    gradient: "from-purple-500 to-fuchsia-600",
   },
   {
     icon: Rocket,
@@ -53,7 +53,7 @@ export function WhoItsFor() {
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-semibold uppercase tracking-wide">
             Who it&apos;s for
           </span>
-          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
+          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
             Built for people who get things done.
           </h2>
         </div>
@@ -62,23 +62,23 @@ export function WhoItsFor() {
           {personas.map((persona) => (
             <div
               key={persona.title}
-              className="group bg-white border border-border rounded-2xl p-7 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
+              className="group bg-card border border-border rounded-2xl p-7 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
             >
               <span className={`inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br ${persona.gradient} text-white shadow-md group-hover:scale-105 transition-transform`}>
                 <persona.icon className="h-5.5 w-5.5" />
               </span>
-              <h3 className="mt-5 font-bold text-slate-900">{persona.title}</h3>
+              <h3 className="mt-5 font-bold text-foreground">{persona.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                 {persona.description}
               </p>
             </div>
           ))}
 
-          <div className="group relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 p-7 text-center hover:border-indigo-300 hover:bg-indigo-50/40 transition-colors">
-            <span className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-white border border-border text-indigo-500 shadow-sm group-hover:scale-105 transition-transform">
+          <div className="group relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border bg-muted/40 p-7 text-center hover:border-primary/50 hover:bg-primary/10 transition-colors">
+            <span className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-card border border-border text-primary shadow-sm group-hover:scale-105 transition-transform">
               <Sparkles className="h-5.5 w-5.5" />
             </span>
-            <p className="mt-5 font-bold text-slate-900">
+            <p className="mt-5 font-bold text-foreground">
               ...and every team tired of chaos.
             </p>
             <p className="mt-1.5 text-sm text-muted-foreground">

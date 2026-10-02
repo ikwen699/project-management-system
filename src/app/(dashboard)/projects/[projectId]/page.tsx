@@ -529,7 +529,7 @@ export default function ProjectDetailPage() {
             <span>{progress?.completedTasks || 0} completed</span>
             <span>{progress?.totalTasks || 0} total</span>
             {progress?.overdueTasks ? (
-              <span className="text-red-600">
+              <span className="text-overdue-text">
                 {progress.overdueTasks} overdue
               </span>
             ) : null}
@@ -643,10 +643,10 @@ export default function ProjectDetailPage() {
                             task.completedAt
                               ? "bg-green-500"
                               : task.priority === "URGENT"
-                              ? "bg-red-500"
+                              ? "bg-priority-urgent"
                               : task.priority === "HIGH"
-                              ? "bg-orange-500"
-                              : "bg-blue-400"
+                              ? "bg-priority-high"
+                              : "bg-priority-medium"
                           }`}
                         />
                         <span
@@ -668,7 +668,7 @@ export default function ProjectDetailPage() {
                     <td className="p-3">
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                          columnColors[task.columnName] || "bg-gray-100 text-gray-600"
+                          columnColors[task.columnName] || "bg-muted text-muted-foreground"
                         }`}
                       >
                         {task.columnName}
@@ -760,7 +760,7 @@ export default function ProjectDetailPage() {
                                   className={`h-2 w-2 rounded-full ${
                                     col.id === task.columnId
                                       ? "bg-primary"
-                                      : "bg-gray-300"
+                                      : "bg-border"
                                   }`}
                                 />
                                 {col.name}
@@ -1172,7 +1172,7 @@ export default function ProjectDetailPage() {
                   <span className="text-muted-foreground w-20">Status</span>
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                      columnColors[selectedTask.columnName] || "bg-gray-100"
+                      columnColors[selectedTask.columnName] || "bg-muted"
                     }`}
                   >
                     {selectedTask.columnName}

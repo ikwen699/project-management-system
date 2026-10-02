@@ -5,12 +5,12 @@ const steps = [
   {
     title: "Create your project",
     description: "Set objectives, timeline, team members, and milestones.",
-    gradient: "from-blue-500 to-indigo-500",
+    gradient: "from-violet-500 to-purple-500",
   },
   {
     title: "Break the work down",
     description: "Turn the project into clear, actionable tasks.",
-    gradient: "from-indigo-500 to-violet-500",
+    gradient: "from-purple-500 to-fuchsia-500",
   },
   {
     title: "Assign responsibilities",
@@ -33,17 +33,17 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="scroll-mt-20 relative py-24 md:py-32 bg-slate-950 overflow-hidden"
+      className="scroll-mt-20 relative py-24 md:py-32 bg-surface overflow-hidden"
     >
       <div className="absolute inset-0 bg-grid-dark [mask-image:radial-gradient(ellipse_55%_55%_at_50%_30%,black,transparent)]" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[420px] w-[760px] rounded-full bg-gradient-to-r from-blue-600/20 via-indigo-600/20 to-violet-600/20 blur-3xl" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[420px] w-[760px] rounded-full bg-gradient-to-r from-violet-600/20 via-purple-600/20 to-fuchsia-600/20 blur-3xl" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-blue-200 text-xs font-semibold uppercase tracking-wide">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-violet-200 text-xs font-semibold uppercase tracking-wide">
             How it works
           </span>
-          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white">
+          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground">
             From idea to completion
             <span className="block text-gradient-light">in a few simple steps.</span>
           </h2>
@@ -53,13 +53,13 @@ export function HowItWorks() {
           {steps.map((step, i) => (
             <div
               key={step.title}
-              className="relative group bg-slate-900/60 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 hover:-translate-y-1 transition-all"
+              className="relative group bg-card/60 border border-border rounded-2xl p-6 hover:border-primary/40 hover:-translate-y-1 transition-all"
             >
               <span className={`inline-flex items-center justify-center h-9 w-12 rounded-lg bg-gradient-to-br ${step.gradient} text-white text-sm font-extrabold shadow-md`}>
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <h3 className="mt-5 font-bold text-white">{step.title}</h3>
-              <p className="mt-2 text-sm text-slate-400 leading-relaxed">
+              <h3 className="mt-5 font-bold text-foreground">{step.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                 {step.description}
               </p>
             </div>
@@ -74,7 +74,7 @@ export function HowItWorks() {
             Start your first project
             <ArrowRight className="h-4.5 w-4.5 group-hover:translate-x-0.5 transition-transform" />
           </Link>
-          <p className="mt-3 text-sm text-slate-400">
+          <p className="mt-3 text-sm text-muted-foreground">
             It takes minutes, not weeks of setup.
           </p>
         </div>

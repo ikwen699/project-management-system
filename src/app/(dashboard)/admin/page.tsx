@@ -18,6 +18,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { STATUS_CHIP_CLASSES } from "@/lib/chip-colors";
 
 interface AdminProject {
   id: string;
@@ -58,24 +59,18 @@ interface AdminFeedback {
   };
 }
 
-const statusColors: Record<string, string> = {
-  PLANNING: "bg-purple-100 text-purple-700",
-  ACTIVE: "bg-blue-100 text-blue-700",
-  ON_HOLD: "bg-yellow-100 text-yellow-700",
-  COMPLETED: "bg-green-100 text-green-700",
-  CANCELLED: "bg-gray-100 text-gray-700",
-};
+const statusColors: Record<string, string> = STATUS_CHIP_CLASSES;
 
 const feedbackStatusColors: Record<string, string> = {
-  NEW: "bg-blue-100 text-blue-700",
-  READ: "bg-amber-100 text-amber-700",
-  RESOLVED: "bg-green-100 text-green-700",
+  NEW: "bg-status-active/15 text-status-active",
+  READ: "bg-due-soon-bg text-due-soon-text",
+  RESOLVED: "bg-status-completed/15 text-status-completed",
 };
 
 const feedbackCategoryColors: Record<string, string> = {
-  BUG: "bg-red-100 text-red-700",
-  SUGGESTION: "bg-purple-100 text-purple-700",
-  OTHER: "bg-gray-100 text-gray-700",
+  BUG: "bg-priority-urgent/15 text-priority-urgent",
+  SUGGESTION: "bg-primary/15 text-primary",
+  OTHER: "bg-muted text-muted-foreground",
 };
 
 export default function AdminPage() {
@@ -626,8 +621,8 @@ export default function AdminPage() {
                             <span
                               className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                                 user.role === "SUPER_ADMIN"
-                                  ? "bg-amber-100 text-amber-700"
-                                  : "bg-gray-100 text-gray-700"
+                                  ? "bg-due-soon-bg text-due-soon-text"
+                                  : "bg-muted text-muted-foreground"
                               }`}
                             >
                               {user.role === "SUPER_ADMIN" ? "Super Admin" : "User"}
@@ -639,13 +634,13 @@ export default function AdminPage() {
                           <td className="p-3">
                             {user.removalScheduledAt ? (
                               <div className="flex items-center gap-2">
-                                <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-700">
+                                <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-due-soon-bg text-due-soon-text">
                                   Removes {new Date(user.removalScheduledAt).toLocaleDateString()}
                                 </span>
                                 <button
                                   onClick={() => handleCancelScheduledRemoval(user.id)}
                                   disabled={user.id === (session?.user as any)?.id}
-                                  className="p-1.5 hover:bg-green-100 text-green-700 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                  className="p-1.5 hover:bg-status-completed/15 text-status-completed rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                                   title="Cancel scheduled removal"
                                 >
                                   <RefreshCw className="h-4 w-4" />
@@ -783,7 +778,7 @@ export default function AdminPage() {
                               <button
                                 onClick={() => handleFeedbackStatusChange(item.id, "READ")}
                                 disabled={updatingFeedback === item.id}
-                                className="p-1.5 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors disabled:opacity-30"
+                                className="p-1.5 hover:bg-primary/15 text-primary rounded-lg transition-colors disabled:opacity-30"
                                 title="Mark as Read"
                               >
                                 <Check className="h-4 w-4" />
@@ -793,7 +788,7 @@ export default function AdminPage() {
                               <button
                                 onClick={() => handleFeedbackStatusChange(item.id, "RESOLVED")}
                                 disabled={updatingFeedback === item.id}
-                                className="p-1.5 hover:bg-green-100 text-green-600 rounded-lg transition-colors disabled:opacity-30"
+                                className="p-1.5 hover:bg-status-completed/15 text-status-completed rounded-lg transition-colors disabled:opacity-30"
                                 title="Mark as Resolved"
                               >
                                 <RefreshCw className="h-4 w-4" />
