@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { XoraLogo } from "@/components/XoraLogo";
-
-type PlanChoice = "starter" | "trial" | "business";
+import { PLAN_INTENT_KEY } from "@/lib/plan-intent";
 
 function RegisterForm() {
   const searchParams = useSearchParams();
@@ -16,12 +15,17 @@ function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [planChoice, setPlanChoice] = useState<PlanChoice>(() => {
-    if (searchParams.get("plan") === "business") return "business";
-    if (searchParams.get("trial") === "business") return "trial";
-    return "starter";
-  });
   const router = useRouter();
+
+  // Plan selection happens after login. Keep any marketing intent so the
+  // post-login prompt can preselect it.
+  useEffect(() => {
+    if (searchParams.get("plan") === "business") {
+      localStorage.setItem(PLAN_INTENT_KEY, "business");
+    } else if (searchParams.get("trial") === "business") {
+      localStorage.setItem(PLAN_INTENT_KEY, "trial");
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,8 +51,6 @@ function RegisterForm() {
           name,
           email,
           password,
-          plan: planChoice === "business" ? "business" : undefined,
-          trial: planChoice === "trial",
         }),
       });
 
@@ -59,9 +61,7 @@ function RegisterForm() {
         return;
       }
 
-      if (planChoice === "business") {
-        router.push("/login?registered=true&plan=business");
-      } else if (redirect && redirect.startsWith("/")) {
+      if (redirect && redirect.startsWith("/")) {
         router.push(
           "/login?registered=true&redirect=" + encodeURIComponent(redirect)
         );
@@ -75,69 +75,18 @@ function RegisterForm() {
     }
   }
 
-  const planOptions: {
-    value: PlanChoice;
-    title: string;
-    subtitle: string;
-  }[] = [
-    {
-      value: "starter",
-      title: "Starter — Free",
-      subtitle: "Up to 3 projects, basic task management",
-    },
-    {
-      value: "trial",
-      title: "1-Week Business Trial",
-      subtitle: "Test Business with limits for 7 days",
-    },
-    {
-      value: "business",
-      title: "Business — $12/mo",
-      subtitle: "Unlimited projects, full access, pay now",
-    },
-  ];
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface px-4 py-8">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <XoraLogo size={56} className="h-14 w-14 mx-auto mb-3" />
           <h1 className="text-3xl font-bold">Xora</h1>
-          <p className="text-muted-foreground mt-2">Create your account</p>
+          <p className="text-muted-foreground mt-2">
+            Create your account, then choose your plan
+          </p>
         </div>
 
         <div className="bg-card rounded-xl border border-border p-6">
-          <div className="mb-5">
-            <p className="text-sm font-medium mb-2.5">Choose a plan</p>
-            <div className="space-y-2">
-              {planOptions.map((option) => (
-                <label
-                  key={option.value}
-                  className={`block border rounded-lg px-3 py-2.5 cursor-pointer transition-colors ${
-                    planChoice === option.value
-                      ? "border-primary bg-primary/5"
-                      : "border-input hover:border-primary/50"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="plan"
-                    value={option.value}
-                    checked={planChoice === option.value}
-                    onChange={() => setPlanChoice(option.value)}
-                    className="sr-only"
-                  />
-                  <span className="block text-sm font-semibold">
-                    {option.title}
-                  </span>
-                  <span className="block text-xs text-muted-foreground">
-                    {option.subtitle}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="bg-destructive/10 text-destructive text-sm px-3 py-2 rounded-lg">

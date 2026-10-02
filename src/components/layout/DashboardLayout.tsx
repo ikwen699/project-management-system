@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { PlanBanner } from "@/components/billing/PlanBanner";
+import { PlanPromptModal } from "@/components/billing/PlanPromptModal";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -20,6 +21,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </main>
       </div>
       {showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
+      <PlanPromptModal />
     </div>
   );
 }

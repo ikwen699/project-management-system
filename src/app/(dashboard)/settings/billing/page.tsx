@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import { getEntitlement, planLabel } from "@/lib/billing";
-import { PayButton } from "@/components/billing/PayButton";
+import { PlanManager } from "@/components/billing/PlanManager";
 import { CheckCircle2, XCircle } from "lucide-react";
 
 export default async function BillingPage({
@@ -16,6 +17,16 @@ export default async function BillingPage({
   const entitlement = session?.user?.id
     ? await getEntitlement(session.user.id)
     : null;
+
+  let projectCount = 0;
+  if (entitlement && !entitlement.isFullAccess) {
+    const { count } = await supabase
+      .from("Project")
+      .select("id", { count: "exact", head: true })
+      .eq("ownerId", session!.user!.id)
+      .not("isArchived", "eq", true);
+    projectCount = count || 0;
+  }
 
   if (!entitlement) {
     return (
@@ -89,9 +100,12 @@ export default async function BillingPage({
         </div>
       </div>
 
-      {!entitlement.isFullAccess && (
-        <PayButton currentPlan={entitlement.planStatus} />
-      )}
+      <div>
+        <h2 className="mb-3 text-sm font-medium text-muted-foreground">
+          All plans
+        </h2>
+        <PlanManager plan={{ ...entitlement, projectCount }} />
+      </div>
     </div>
   );
 }
