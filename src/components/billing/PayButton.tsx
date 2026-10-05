@@ -3,10 +3,19 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { CreditCard } from "lucide-react";
+import { PRICING, formatNaira } from "@/lib/pricing";
 
-export function PayButton({ compact = false }: { compact?: boolean }) {
+export function PayButton({
+  compact = false,
+  plan = "business",
+}: {
+  compact?: boolean;
+  plan?: "business" | "scale";
+}) {
   const [interval, setInterval] = useState<"monthly" | "annual">("monthly");
   const [loading, setLoading] = useState(false);
+
+  const pricing = PRICING[plan];
 
   async function handlePay() {
     setLoading(true);
@@ -14,7 +23,7 @@ export function PayButton({ compact = false }: { compact?: boolean }) {
       const res = await fetch("/api/payments/initialize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: "business", interval }),
+        body: JSON.stringify({ plan, interval }),
       });
 
       const data = await res.json();
@@ -32,7 +41,9 @@ export function PayButton({ compact = false }: { compact?: boolean }) {
     }
   }
 
-  const price = interval === "annual" ? "$120" : "$12";
+  const price = formatNaira(
+    interval === "annual" ? pricing.annual : pricing.monthly
+  );
 
   return (
     <div className={compact ? "" : "bg-card rounded-xl border border-border p-6"}>
@@ -47,7 +58,9 @@ export function PayButton({ compact = false }: { compact?: boolean }) {
           }`}
         >
           <p className="text-sm font-semibold">Monthly</p>
-          <p className="text-xs text-muted-foreground">$12 / month</p>
+          <p className="text-xs text-muted-foreground">
+            {formatNaira(pricing.monthly)} / month
+          </p>
         </button>
         <button
           type="button"
@@ -60,7 +73,7 @@ export function PayButton({ compact = false }: { compact?: boolean }) {
         >
           <p className="text-sm font-semibold">Annual</p>
           <p className="text-xs text-muted-foreground">
-            $120 / year <span className="text-status-completed">(save 17%)</span>
+            {formatNaira(pricing.annual)} / year
           </p>
         </button>
       </div>
@@ -74,7 +87,7 @@ export function PayButton({ compact = false }: { compact?: boolean }) {
         {loading ? "Redirecting to Paystack..." : `Pay ${price} with Paystack`}
       </button>
       <p className="mt-3 text-center text-xs text-muted-foreground">
-        Secure checkout by Paystack. Pay once, covered for the full period.
+        Secure checkout by Paystack. Renews automatically — cancel anytime.
       </p>
     </div>
   );

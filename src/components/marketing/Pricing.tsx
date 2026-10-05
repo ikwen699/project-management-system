@@ -16,7 +16,7 @@ const plans: Plan[] = [
   {
     name: "Starter",
     tagline: "Organize your work",
-    price: "$0",
+    price: "\u20a60",
     priceSuffix: "",
     priceNote: "Free forever",
     cta: { label: "Start Free", href: "/register" },
@@ -31,9 +31,9 @@ const plans: Plan[] = [
   {
     name: "Business",
     tagline: "Run your team",
-    price: "$12",
+    price: "\u20a615,000",
     priceSuffix: "/user/mo",
-    priceNote: "or $120/year per user — save 17%",
+    priceNote: "or \u20a6150,000/year per user",
     cta: { label: "Choose Business", href: "/register?plan=business" },
     highlighted: true,
     features: [
@@ -48,10 +48,10 @@ const plans: Plan[] = [
   {
     name: "Scale",
     tagline: "Run your organization",
-    price: "$25",
+    price: "\u20a620,000",
     priceSuffix: "/user/mo",
-    priceNote: "Annual billing available",
-    cta: { label: "Contact Sales", href: "mailto:sales@xora.app" },
+    priceNote: "or \u20a6300,000/year per user",
+    cta: { label: "Choose Scale", href: "/register" },
     highlighted: false,
     features: [
       "Advanced permissions",

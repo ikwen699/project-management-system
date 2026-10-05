@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { Check, Crown, Rocket, Sparkles } from "lucide-react";
+import { Check, Crown, Layers, Rocket, Sparkles } from "lucide-react";
 import { PayButton } from "./PayButton";
+import { PRICING, formatNaira } from "@/lib/pricing";
 
 interface PlanState {
   isFullAccess: boolean;
@@ -50,7 +51,7 @@ export function PlanManager({ plan }: { plan: PlanState }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {/* Starter */}
         <div
           className={`flex flex-col rounded-xl border p-5 ${
@@ -67,7 +68,7 @@ export function PlanManager({ plan }: { plan: PlanState }) {
             )}
           </div>
           <p className="mb-1 text-2xl font-bold">
-            $0<span className="text-sm font-normal text-muted-foreground">/mo</span>
+            {formatNaira(PRICING.starter.monthly)}<span className="text-sm font-normal text-muted-foreground">/mo</span>
           </p>
           <ul className="mb-4 flex-1 space-y-1 text-sm text-muted-foreground">
             <li className="flex items-center gap-2">
@@ -188,13 +189,13 @@ export function PlanManager({ plan }: { plan: PlanState }) {
             )}
           </div>
           <p className="mb-1 text-2xl font-bold">
-            $12
+            {formatNaira(PRICING.business.monthly)}
             <span className="text-sm font-normal text-muted-foreground">
               /user/mo
             </span>
           </p>
           <p className="mb-4 text-xs text-muted-foreground">
-            or $120/year per user — save 17%
+            or {formatNaira(PRICING.business.annual)}/year per user
           </p>
           {plan.isFullAccess && !plan.isTrial ? (
             <div className="mt-auto rounded-lg border border-border bg-surface px-3 py-2 text-center text-xs text-muted-foreground">
@@ -203,6 +204,43 @@ export function PlanManager({ plan }: { plan: PlanState }) {
           ) : (
             <div className="mt-auto">
               <PayButton compact />
+            </div>
+          )}
+        </div>
+
+        {/* Scale */}
+        <div
+          className={`flex flex-col rounded-xl border p-5 ${
+            plan.plan === "scale" && plan.isFullAccess && !plan.isTrial
+              ? "border-primary bg-primary/5"
+              : "border-border bg-card"
+          }`}
+        >
+          <div className="mb-3 flex items-center gap-2">
+            <Layers className="h-5 w-5 text-muted-foreground" />
+            <h3 className="font-semibold">Scale</h3>
+            {plan.plan === "scale" && plan.isFullAccess && !plan.isTrial && (
+              <span className="ml-auto rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium uppercase text-primary">
+                Current
+              </span>
+            )}
+          </div>
+          <p className="mb-1 text-2xl font-bold">
+            {formatNaira(PRICING.scale.monthly)}
+            <span className="text-sm font-normal text-muted-foreground">
+              /user/mo
+            </span>
+          </p>
+          <p className="mb-4 text-xs text-muted-foreground">
+            or {formatNaira(PRICING.scale.annual)}/year per user
+          </p>
+          {plan.plan === "scale" && plan.isFullAccess && !plan.isTrial ? (
+            <div className="mt-auto rounded-lg border border-border bg-surface px-3 py-2 text-center text-xs text-muted-foreground">
+              Your Scale plan is active
+            </div>
+          ) : (
+            <div className="mt-auto">
+              <PayButton compact plan="scale" />
             </div>
           )}
         </div>

@@ -1,27 +1,12 @@
 import { createHmac } from "crypto";
 import { supabase } from "./supabase";
+import { PRICING, priceFor } from "./pricing";
 import type { BillingInterval, Plan } from "@/types";
 
+export { PRICING, priceFor };
+
 export const PAYSTACK_API = "https://api.paystack.co";
-export const PAYSTACK_CURRENCY = "USD";
-
-export const PRICING: Record<
-  Plan,
-  { label: string; monthly: number; annual: number }
-> = {
-  starter: { label: "Starter", monthly: 0, annual: 0 },
-  business: { label: "Business", monthly: 12, annual: 120 },
-  scale: { label: "Scale", monthly: 25, annual: 0 },
-};
-
-export function priceFor(
-  plan: Plan,
-  interval: BillingInterval
-): number {
-  return interval === "annual"
-    ? PRICING[plan].annual || PRICING[plan].monthly * 12
-    : PRICING[plan].monthly;
-}
+export const PAYSTACK_CURRENCY = "NGN";
 
 export function appBaseUrl(): string {
   const envUrl =
@@ -40,6 +25,150 @@ function addPeriod(date: Date, interval: BillingInterval): Date {
     d.setMonth(d.getMonth() + 1);
   }
   return d;
+}
+
+export function planCodeFor(
+  plan: Plan,
+  interval: BillingInterval
+): string | null {
+  const suffix = interval === "annual" ? "ANNUAL" : "MONTHLY";
+  const code = process.env[`PAYSTACK_PLAN_${plan.toUpperCase()}_${suffix}`];
+  return code && code.startsWith("PLN_") ? code : null;
+}
+
+export function planForPlanCode(
+  code: string
+): { plan: Plan; interval: BillingInterval } | null {
+  for (const plan of ["business", "scale"] as const) {
+    for (const interval of ["monthly", "annual"] as const) {
+      if (planCodeFor(plan, interval) === code) return { plan, interval };
+    }
+  }
+  return null;
+}
+
+export async function fetchPlanAmount(
+  planCode: string
+): Promise<number | null> {
+  const secret = process.env.PAYSTACK_SECRET_KEY;
+  if (!secret) return null;
+  try {
+    const res = await fetch(
+      `${PAYSTACK_API}/plan/${encodeURIComponent(planCode)}`,
+      { headers: { Authorization: `Bearer ${secret}` } }
+    );
+    const body = await res.json();
+    if (!body?.status || !body.data?.amount) return null;
+    const major = Math.round(Number(body.data.amount) / 100);
+    return major > 0 ? major : null;
+  } catch (error) {
+    console.error("fetchPlanAmount error:", error);
+    return null;
+  }
+}
+
+/**
+ * Activates/extends a plan for a subscription renewal charge (webhook fires
+ * charge.success for every recurring payment). Idempotent: a Payment row is
+ * inserted with the renewal reference first — a duplicate reference means the
+ * renewal was already processed.
+ */
+export async function applyRenewal(
+  reference: string,
+  planCode: string,
+  customerEmail: string,
+  amountMajor: number | null
+): Promise<boolean> {
+  const mapping = planForPlanCode(planCode);
+  if (!mapping) return false;
+
+  try {
+    const existing = await supabase
+      .from("Payment")
+      .select("id")
+      .eq("txRef", reference)
+      .maybeSingle();
+    if (existing.data) return false;
+
+    const email = customerEmail.trim().toLowerCase();
+    let userRes = await supabase
+      .from("User")
+      .select("id, email")
+      .eq("email", email)
+      .maybeSingle();
+    if (!userRes.data) {
+      userRes = await supabase
+        .from("User")
+        .select("id, email")
+        .eq("email", customerEmail)
+        .maybeSingle();
+    }
+    if (userRes.error || !userRes.data) {
+      console.error(
+        "applyRenewal: no user for customer email",
+        customerEmail
+      );
+      return false;
+    }
+    const userId = userRes.data.id;
+
+    const { data: userData } = await supabase
+      .from("User")
+      .select("planExpiresAt")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const now = new Date();
+    const current = userData?.planExpiresAt
+      ? new Date(userData.planExpiresAt)
+      : null;
+    const base =
+      current && current.getTime() > now.getTime() ? current : now;
+    const expiresAt = addPeriod(base, mapping.interval).toISOString();
+
+    const { error: insertError } = await supabase
+      .from("Payment")
+      .insert({
+        id: crypto.randomUUID(),
+        userId,
+        txRef: reference,
+        amount: amountMajor ?? priceFor(mapping.plan, mapping.interval),
+        currency: PAYSTACK_CURRENCY,
+        interval: mapping.interval,
+        status: "successful",
+        plan: mapping.plan,
+        planExpiresAt: expiresAt,
+      });
+
+    if (insertError) {
+      if (insertError.code === "23505") return true;
+      console.error("applyRenewal payment insert error:", insertError);
+      return false;
+    }
+
+    const { error: userError } = await supabase
+      .from("User")
+      .update({
+        plan: mapping.plan,
+        planStatus: "active",
+        planExpiresAt: expiresAt,
+        trialEndsAt: null,
+      })
+      .eq("id", userId);
+
+    if (userError) {
+      console.error("applyRenewal user update error:", userError);
+      return false;
+    }
+
+    console.log(
+      `applyRenewal: ${mapping.plan}/${mapping.interval} extended to ${expiresAt} for user ${userId}`
+    );
+    return true;
+  } catch (error) {
+    console.error("applyRenewal error:", error);
+    return false;
+  }
 }
 
 export function verifyWebhookSignature(

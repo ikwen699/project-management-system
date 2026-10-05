@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { verifyAndActivate, verifyWebhookSignature } from "@/lib/payments";
+import {
+  applyRenewal,
+  verifyAndActivate,
+  verifyWebhookSignature,
+} from "@/lib/payments";
 
 export async function POST(request: Request) {
   const rawBody = await request.text();
@@ -15,7 +19,18 @@ export async function POST(request: Request) {
     if (event.event === "charge.success") {
       const reference = event.data?.reference;
       if (reference) {
-        await verifyAndActivate(reference);
+        const handled = await verifyAndActivate(reference);
+        if (!handled) {
+          const planCode: string | undefined = event.data?.plan?.plan_code;
+          const email: string | undefined = event.data?.customer?.email;
+          const amount =
+            typeof event.data?.amount === "number"
+              ? Math.round(event.data.amount / 100)
+              : null;
+          if (planCode && email) {
+            await applyRenewal(reference, planCode, email, amount);
+          }
+        }
       }
     }
 

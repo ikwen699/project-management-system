@@ -11,6 +11,7 @@ import {
   readPlanIntent,
   type PlanIntent,
 } from "@/lib/plan-intent";
+import { PRICING, formatNaira } from "@/lib/pricing";
 
 interface PlanState {
   isFullAccess: boolean;
@@ -222,7 +223,8 @@ export function PlanPromptModal() {
               <span className="flex items-center gap-2">
                 <span className="text-sm font-semibold">Business</span>
                 <span className="text-xs text-muted-foreground">
-                  $12/month or $120/year
+                  {formatNaira(PRICING.business.monthly)}/month or{" "}
+                  {formatNaira(PRICING.business.annual)}/year
                 </span>
               </span>
               <span className="mt-0.5 block text-xs text-muted-foreground">

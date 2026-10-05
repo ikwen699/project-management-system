@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { XoraLogo } from "@/components/XoraLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { PlanWidget } from "@/components/billing/PlanWidget";
 
 interface HeaderProps {
   onOpenFeedback: () => void;
@@ -116,12 +117,20 @@ export function Header({ onOpenFeedback }: HeaderProps) {
               <p className="text-lg font-bold">Xora</p>
             </div>
             <nav className="space-y-1">
-              <a href="/dashboard" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Dashboard</a>
-              <a href="/projects" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Projects</a>
-              <a href="/organizations" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Organizations</a>
-              <a href="/calendar" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Calendar</a>
-              <a href="/notifications" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Notifications</a>
+              <Link href="/dashboard" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Dashboard</Link>
+              <Link href="/projects" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Projects</Link>
+              <Link href="/organizations" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Organizations</Link>
+              <Link href="/calendar" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Calendar</Link>
+              <Link href="/notifications" className="block px-3 py-2 rounded-lg hover:bg-sidebar-accent" onClick={() => setShowMobileMenu(false)}>Notifications</Link>
             </nav>
+            <div className="mt-4 border-t border-sidebar-border pt-3">
+              <PlanWidget
+                isAdmin={
+                  (session?.user as unknown as { role?: string })?.role ===
+                  "SUPER_ADMIN"
+                }
+              />
+            </div>
           </div>
         </div>
       )}

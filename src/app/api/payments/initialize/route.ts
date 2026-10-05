@@ -5,9 +5,9 @@ import {
   PAYSTACK_API,
   PAYSTACK_CURRENCY,
   appBaseUrl,
-  priceFor,
+  fetchPlanAmount,
+  planCodeFor,
 } from "@/lib/payments";
-import type { BillingInterval, Plan } from "@/types";
 
 export async function POST(request: Request) {
   try {
@@ -31,7 +31,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const amount = priceFor(plan as Plan, interval as BillingInterval);
+    const planCode = planCodeFor(plan, interval);
+    if (!planCode) {
+      return NextResponse.json(
+        { error: "This plan isn't available for checkout yet." },
+        { status: 400 }
+      );
+    }
+
+    const amount = await fetchPlanAmount(planCode);
+    if (amount === null) {
+      return NextResponse.json(
+        { error: "Could not verify plan pricing. Please try again." },
+        { status: 500 }
+      );
+    }
+
     const reference = "XORA-" + crypto.randomUUID();
     const expiresAt = new Date();
     if (interval === "annual") {
@@ -74,12 +89,14 @@ export async function POST(request: Request) {
         email: session.user.email,
         amount: Math.round(amount * 100),
         currency: PAYSTACK_CURRENCY,
+        plan: planCode,
         reference,
         callback_url: `${appBaseUrl()}/api/payments/callback`,
         metadata: {
           userId: session.user.id,
           plan,
           interval,
+          planCode,
           txRef: reference,
         },
       }),

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { XoraLogo } from "@/components/XoraLogo";
+import { PlanWidget } from "@/components/billing/PlanWidget";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -40,7 +41,8 @@ export function Sidebar({ onOpenFeedback }: SidebarProps) {
   const { data: session } = useSession();
   const [collapsed, setCollapsed] = useState(false);
 
-  const isAdmin = (session?.user as any)?.role === "SUPER_ADMIN";
+  const isAdmin =
+    (session?.user as unknown as { role?: string })?.role === "SUPER_ADMIN";
   const allItems = isAdmin ? [...navItems, adminItem] : navItems;
 
   return (
@@ -108,6 +110,10 @@ export function Sidebar({ onOpenFeedback }: SidebarProps) {
           {!collapsed && <span>Feedback</span>}
         </button>
       </nav>
+
+      <div className="border-t border-sidebar-border p-2">
+        <PlanWidget collapsed={collapsed} isAdmin={isAdmin} />
+      </div>
     </aside>
   );
 }
